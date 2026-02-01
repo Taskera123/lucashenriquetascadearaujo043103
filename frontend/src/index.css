@@ -6,6 +6,9 @@
   color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
   background-color: #242424;
+  --app-page-gradient: linear-gradient(180deg, #0f172a 0%, #1f2937 45%, #374151 100%);
+  --app-page-image: url("./assets/music-notes.png");
+
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -22,12 +25,37 @@ a:hover {
   color: #535bf2;
 }
 
+html,
 body {
   margin: 0;
   display: flex;
   place-items: center;
   min-width: 320px;
   min-height: 100vh;
+  background-image: var(--app-page-image), var(--app-page-gradient);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+  background-attachment: fixed;
+  background-blend-mode: soft-light, normal;
+}
+
+#root {
+  min-height: 100vh;
+  width: 100%;
+  background: transparent;
+}
+
+.app-dialog .p-dialog {
+  width: min(900px, 95vw);
+}
+
+.app-carousel .p-carousel-item {
+  padding: 0 6px;
+}
+
+.app-carousel .p-carousel-content {
+  border-radius: 12px;
 }
 
 h1 {
@@ -35,7 +63,7 @@ h1 {
   line-height: 1.1;
 }
 
-button {
+button:not(.p-button) {
   border-radius: 8px;
   border: 1px solid transparent;
   padding: 0.6em 1.2em;
@@ -46,11 +74,11 @@ button {
   cursor: pointer;
   transition: border-color 0.25s;
 }
-button:hover {
+button:not(.p-button):hover {
   border-color: #646cff;
 }
-button:focus,
-button:focus-visible {
+button:not(.p-button):focus,
+button:not(.p-button):focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
 
@@ -58,11 +86,57 @@ button:focus-visible {
   :root {
     color: #213547;
     background-color: #ffffff;
+    --app-page-gradient: linear-gradient(180deg, #e2e8f0 0%, #f8fafc 55%, #ffffff 100%);
   }
   a:hover {
     color: #747bff;
   }
-  button {
+  button:not(.p-button) {
     background-color: #f9f9f9;
   }
+}
+
+.app-button-primary.p-button {
+  background: var(--primary-color);
+  border-color: var(--primary-color);
+  color: var(--primary-color-text);
+}
+
+.app-button-primary.p-button.p-button-text,
+.app-button-primary.p-button.p-button-icon-only {
+  background: transparent;
+  border-color: transparent;
+  color: var(--primary-color);
+}
+
+.app-button-primary.p-button:enabled:hover {
+  filter: brightness(0.95);
+}
+
+.app-button-primary.p-button.p-button-text:enabled:hover,
+.app-button-primary.p-button.p-button-icon-only:enabled:hover {
+  background: color-mix(in srgb, var(--primary-color), transparent 88%);
+}
+
+.app-button-secondary.p-button {
+  background: var(--surface-200);
+  border-color: var(--surface-200);
+  color: var(--text-color);
+}
+
+.app-button-secondary.p-button.p-button-text,
+.app-button-secondary.p-button.p-button-icon-only {
+  background: transparent;
+  border-color: transparent;
+  color: var(--text-color);
+}
+
+.app-button-secondary.p-button:enabled:hover {
+  background: var(--surface-300);
+  border-color: var(--surface-300);
+}
+
+.app-button-secondary.p-button.p-button-text:enabled:hover,
+.app-button-secondary.p-button.p-button-icon-only:enabled:hover {
+  background: color-mix(in srgb, var(--surface-300), transparent 60%);
 }
