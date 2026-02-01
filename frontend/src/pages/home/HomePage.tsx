@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Button } from 'primereact/button';
 import { Card } from 'primereact/card';
 import { Carousel } from 'primereact/carousel';
@@ -7,6 +7,8 @@ import { useNavigate } from 'react-router-dom';
 import { CatalogoService } from '../../services/CatalogoService';
 import type { AlbumDTO, ArtistaResponseDTO, BandaResponseDTO, CatalogoResponseDTO } from '../../types/api';
 import { theme$, toggleTheme } from '../../state/theme.store';
+import { updates$ } from '../../state/wsUpdates.store';
+
 
 export default function HomePage() {
   const nav = useNavigate();
@@ -15,29 +17,40 @@ export default function HomePage() {
   const [error, setError] = useState<string | null>(null);
   const [theme, setTheme] = useState(theme$.value);
 
-  useEffect(() => {
-    let active = true;
-    (async () => {
-      setLoading(true);
-      setError(null);
-      try {
-        const { data } = await CatalogoService.obterCatalogo();
-        if (active) setCatalogo(data);
-      } catch (err: any) {
-        if (active) setError(err?.message ?? 'Erro ao carregar catálogo');
-      } finally {
-        if (active) setLoading(false);
-      }
-    })();
-    return () => {
-      active = false;
-    };
+  const loadCatalogo = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const { data } = await CatalogoService.obterCatalogo();
+      setCatalogo(data);
+    } catch (err: any) {
+      setError(err?.message ?? 'Erro ao carregar catálogo');
+    } finally {
+      setLoading(false);
+    }
   }, []);
+
+  useEffect(() => {
+    loadCatalogo();
+  }, [loadCatalogo]);
 
   useEffect(() => {
     const sub = theme$.subscribe(setTheme);
     return () => sub.unsubscribe();
   }, []);
+
+  useEffect(() => {
+    const sub = updates$.subscribe((event) => {
+      if (
+        (event.entity === 'album' && event.action === 'created')
+        || (event.entity === 'artista' && event.action === 'created')
+        || (event.entity === 'banda' && event.action === 'created')
+      ) {
+        loadCatalogo();
+      }
+    });
+    return () => sub.unsubscribe();
+  }, [loadCatalogo]);
 
   const artistas = catalogo?.artistas ?? [];
   const albuns = catalogo?.albuns ?? [];

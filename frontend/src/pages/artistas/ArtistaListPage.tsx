@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { artistList$, ArtistFacade } from '../../facades/ArtistFacade';
 import type { AlbumDTO, SortDir } from '../../types/api';
@@ -10,6 +10,7 @@ import { Button } from 'primereact/button';
 import { Carousel } from 'primereact/carousel';
 import ArtistFormDialog from '../../components/artistas/ArtistFormDialog';
 import ArtistDetailDialog from '../../components/artistas/ArtistDetailDialog';
+import { updates$ } from '../../state/wsUpdates.store';
 
 export default function ArtistListPage() {
   const nav = useNavigate();
@@ -31,23 +32,37 @@ export default function ArtistListPage() {
     ArtistFacade.search();
   }, [s.page, s.size, s.sortDir]);
 
-  useEffect(() => {
-    (async () => {
-      setAlbumLoading(true);
-      try {
-        const artistAlbums = (s.content ?? []).flatMap((artist) => artist.albuns ?? []);
-        if (artistAlbums.length) {
-          setAlbums(artistAlbums);
-          return;
-        }
-
-        const { data } = await ArtistFacade.getAllAlbums();
-        setAlbums(data);
-      } finally {
-        setAlbumLoading(false);
+  const loadAlbums = useCallback(async () => {
+    setAlbumLoading(true);
+    try {
+      const artistAlbums = (s.content ?? []).flatMap((artist) => artist.albuns ?? []);
+      if (artistAlbums.length) {
+        setAlbums(artistAlbums);
+        return;
       }
-    })();
+
+      const { data } = await ArtistFacade.getAllAlbums();
+      setAlbums(data);
+    } finally {
+      setAlbumLoading(false);
+    }
   }, [s.content]);
+
+  useEffect(() => {
+    loadAlbums();
+  }, [loadAlbums]);
+
+  useEffect(() => {
+    const sub = updates$.subscribe((event) => {
+      if (event.entity === 'album' && event.action === 'created') {
+        loadAlbums();
+      }
+      if (event.entity === 'artista' && event.action === 'created') {
+        ArtistFacade.search();
+      }
+    });
+    return () => sub.unsubscribe();
+  }, [loadAlbums]);
 
   const sortOptions: { label: string; value: SortDir }[] = [
     { label: 'A → Z', value: 'asc' },

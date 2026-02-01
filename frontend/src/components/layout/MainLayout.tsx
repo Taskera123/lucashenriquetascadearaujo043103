@@ -1,5 +1,5 @@
 import { Outlet, useNavigate } from 'react-router-dom';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Dialog } from 'primereact/dialog';
 import { Button } from 'primereact/button';
 import SideNav from './SideNav';
@@ -7,7 +7,8 @@ import TopBar from './TopBar';
 import { auth$ } from '../../state/auth.store';
 import { AuthFacade } from '../../facades/AuthFacade';
 import { createStompClient } from '../../services/WebSocket';
-import { emitUpdate } from '../../state/wsUpdates.store';
+import { emitUpdate, updates$ } from '../../state/wsUpdates.store';
+import { Toast } from 'primereact/toast';
 
 export default function MainLayout() {
   const [collapsed, setCollapsed] = useState(false);
@@ -16,6 +17,7 @@ export default function MainLayout() {
   const [showRenew, setShowRenew] = useState(false);
   const [timeLeftMs, setTimeLeftMs] = useState<number | null>(null);
   const [isSmall, setIsSmall] = useState(false);
+  const toastRef = useRef<Toast>(null);
   const SIDEBAR_W = collapsed ? 72 : 260;
   const thresholdMs = 2 * 60 * 1000;
   const baseUrl = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8080/albumartistaapi';
@@ -69,6 +71,24 @@ export default function MainLayout() {
   }, [auth.tokenWithType, baseUrl]);
 
   useEffect(() => {
+    const sub = updates$.subscribe((event) => {
+      if (event.action !== 'created') return;
+      let label = '';
+      if (event.entity === 'album') label = 'Álbum';
+      if (event.entity === 'artista') label = 'Artista';
+      if (event.entity === 'banda') label = 'Banda';
+      if (!label) return;
+      toastRef.current?.show({
+        severity: 'success',
+        summary: `${label} adicionada`,
+        detail: 'Novo cadastro recebido via atualização em tempo real.',
+        life: 5000
+      });
+    });
+    return () => sub.unsubscribe();
+  }, []);
+
+  useEffect(() => {
     if (!auth.expiresAt) {
       setShowRenew(false);
       setTimeLeftMs(null);
@@ -117,6 +137,7 @@ export default function MainLayout() {
 
   return (
     <>
+      <Toast ref={toastRef} position="top-right" />
       <div style={{ display: 'flex', minHeight: '100vh' }}>
         {!isSmall ? <SideNav collapsed={collapsed} onToggle={() => setCollapsed((v) => !v)} /> : null}
         <div style={{ flex: 1, minWidth: 0 }}>
