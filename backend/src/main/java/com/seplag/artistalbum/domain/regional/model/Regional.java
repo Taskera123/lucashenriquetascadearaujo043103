@@ -27,6 +27,9 @@ public class Regional {
     @Column(nullable = false)
     private Boolean ativo = true;
 
+    @Column(name = "codigo_externo")
+    private Integer codigoExterno;
+
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
@@ -70,6 +73,10 @@ public class Regional {
         this.ativo = ativo;
     }
 
+    public Integer getCodigoExterno() { return codigoExterno; }
+
+    public void setCodigoExterno(Integer codigoExterno) { this.codigoExterno = codigoExterno; }
+
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }
@@ -105,6 +112,7 @@ public class Regional {
                 "id=" + id +
                 ", nome='" + nome + '\'' +
                 ", ativo=" + ativo +
+                ", codigoExterno=" + codigoExterno +
                 '}';
     }
 }

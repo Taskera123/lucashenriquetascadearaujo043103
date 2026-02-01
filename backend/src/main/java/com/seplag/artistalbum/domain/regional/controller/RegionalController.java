@@ -1,14 +1,14 @@
 package com.seplag.artistalbum.domain.regional.controller;
 
+import com.seplag.artistalbum.domain.regional.dto.RegionalCreateRequest;
+import com.seplag.artistalbum.domain.regional.dto.RegionalUpdateRequest;
 import com.seplag.artistalbum.domain.regional.model.Regional;
 import com.seplag.artistalbum.domain.regional.service.RegionalSyncService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -35,5 +35,19 @@ public class RegionalController {
     public ResponseEntity<String> syncRegionals() {
         regionalSyncService.syncRegionals();
         return ResponseEntity.ok("Sincronização das regionais concluída");
+    }
+
+    @PostMapping
+    @Operation(summary = "Criar uma nova regional")
+    public ResponseEntity<Regional> createRegional(@Valid @RequestBody RegionalCreateRequest request) {
+        Regional regional = regionalSyncService.createRegional(request);
+        return ResponseEntity.ok(regional);
+    }
+
+    @PutMapping("/{id}")
+    @Operation(summary = "Atualizar estado ativo e tratar alteração de atributos")
+    public ResponseEntity<Regional> updateRegional(@PathVariable Long id, @Valid @RequestBody RegionalUpdateRequest request) {
+        Regional regional = regionalSyncService.updateRegional(id, request);
+        return ResponseEntity.ok(regional);
     }
 }

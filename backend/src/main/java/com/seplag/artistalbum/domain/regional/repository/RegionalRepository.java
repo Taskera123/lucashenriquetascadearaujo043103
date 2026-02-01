@@ -19,11 +19,19 @@ public interface RegionalRepository extends JpaRepository<Regional, Long> {
 
     Optional<Regional> findByNomeAndAtivo(String nome, Boolean ativo);
 
+    Optional<Regional> findByCodigoExternoAndAtivo(Integer codigoExterno, Boolean ativo);
+
     List<Regional> findByNome(String nome);
+
+    List<Regional> findByCodigoExterno(Integer codigoExterno);
 
     @Modifying
     @Query("UPDATE Regional r SET r.ativo = false WHERE r.nome = :nome AND r.ativo = true")
     int deactivateByNome(@Param("nome") String nome);
+
+    @Modifying
+    @Query("UPDATE Regional r SET r.ativo = false WHERE r.codigoExterno = :codigoExterno AND r.ativo = true")
+    int deactivateByCodigoExterno(@Param("codigoExterno") Integer codigoExterno);
 
     @Query("SELECT r FROM Regional r WHERE r.ativo = true ORDER BY r.nome")
     List<Regional> findActiveOrderByNome();

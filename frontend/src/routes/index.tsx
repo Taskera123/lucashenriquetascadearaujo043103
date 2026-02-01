@@ -15,6 +15,8 @@ const BandFormPage = React.lazy(() => import('../pages/bandas/BandaFormPage'));
 const AlbumListPage = React.lazy(() => import('../pages/albums/AlbumListPage'));
 const AlbumDetailPage = React.lazy(() => import('../pages/albums/AlbumDetailPage'));
 const AlbumFormPage = React.lazy(() => import('../pages/albums/AlbumFormPage'));
+const RegionaisPage = React.lazy(() => import('../pages/regionais/RegionaisPage'));
+
 
 function lazy(el: React.ReactNode) {
   return <Suspense fallback={<div style={{ padding: 16 }}>Carregando...</div>}>{el}</Suspense>;
@@ -46,7 +48,8 @@ export const router = createBrowserRouter([
       { path: 'bandas', element: lazy(<BandsListPage />) },
       { path: 'bandas/new', element: lazy(<BandFormPage mode="create" />) },
       { path: 'bandas/:id', element: lazy(<BandDetailPage />) },
-      { path: 'bandas/:id/edit', element: lazy(<BandFormPage mode="edit" />) }
+      { path: 'bandas/:id/edit', element: lazy(<BandFormPage mode="edit" />) },
+      { path: 'regionais', element: lazy(<RegionaisPage />) }
     ]
   }
 ]);

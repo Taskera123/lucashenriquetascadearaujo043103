@@ -12,6 +12,7 @@ const items: Item[] = [
   { to: '/admin/artistas', label: 'Artistas', icon: 'pi pi-users' },
   { to: '/admin/albums', label: 'Álbuns', icon: 'pi pi-images' },
   { to: '/admin/bandas', label: 'Bandas', icon: 'pi pi-sitemap' },
+  { to: '/admin/regionais', label: 'Regionais', icon: 'pi pi-map-marker' },
   { to: '/admin/health', label: 'Health', icon: 'pi pi-heart' }
 ];
 

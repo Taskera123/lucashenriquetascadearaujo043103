@@ -31,6 +31,7 @@ export default function TopBar({ sidebarWidth, username }: { sidebarWidth: numbe
             <Button icon="pi pi-users" text aria-label="Artistas" onClick={() => nav('/admin/artistas')} />
             <Button icon="pi pi-images" text aria-label="Álbuns" onClick={() => nav('/admin/albums')} />
             <Button icon="pi pi-sitemap" text aria-label="Bandas" onClick={() => nav('/admin/bandas')} />
+            <Button icon="pi pi-map-marker" text aria-label="Regionais" onClick={() => nav('/admin/regionais')} />  
             <Button icon="pi pi-heart" text aria-label="Health" onClick={() => nav('/admin/health')} />
             <Button icon={theme === 'dark' ? 'pi pi-sun' : 'pi pi-moon'} text aria-label="Alternar tema" onClick={toggleTheme} />
           </div>
