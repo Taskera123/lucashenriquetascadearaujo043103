@@ -3,7 +3,7 @@ package artistalbum.config.ratelimit;
 import com.seplag.artistalbum.config.ratelimit.TaxaLimiteConfig;
 import com.seplag.artistalbum.config.ratelimit.TaxaLimiteInterceptor;
 import io.github.bucket4j.Bucket;
-import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.http.HttpStatus;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -31,7 +31,7 @@ class TaxaLimiteInterceptorTest {
         boolean permitido = interceptor.preHandle(requisicao, respostaLimite, new Object());
 
         assertThat(permitido).isFalse();
-        assertThat(respostaLimite.getStatus()).isEqualTo(HttpServletResponse.SC_TOO_MANY_REQUESTS);
+        assertThat(respostaLimite.getStatus()).isEqualTo(HttpStatus.TOO_MANY_REQUESTS.value());
         assertThat(respostaLimite.getHeader("X-Rate-Limit-Retry-After-Seconds")).isNotNull();
     }
 }
