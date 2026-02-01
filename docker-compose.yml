@@ -60,6 +60,18 @@ services:
       timeout: 10s
       retries: 3
 
+  frontlucas04310316140:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.frontend
+    container_name: artist-album-frontend
+    ports:
+      - "8081:80"
+    depends_on:
+      - apilucas04310316140
+    networks:
+      - artist-network
+
 volumes:
   postgres_data:
   minio_data:
