@@ -1,4 +1,4 @@
-package com.seplag.artistalbum.domain.album.websocket;
+package com.seplag.artistalbum.config.websocket;
 
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;

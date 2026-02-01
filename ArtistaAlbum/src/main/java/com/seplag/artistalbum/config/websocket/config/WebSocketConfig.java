@@ -1,4 +1,4 @@
-package com.seplag.artistalbum.domain.album.websocket.config;
+package com.seplag.artistalbum.config.websocket.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;

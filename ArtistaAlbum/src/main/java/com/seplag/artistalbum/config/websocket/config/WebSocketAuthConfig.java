@@ -1,4 +1,4 @@
-package com.seplag.artistalbum.domain.album.websocket.config;
+package com.seplag.artistalbum.config.websocket.config;
 
 import com.seplag.artistalbum.domain.auth.service.JwtService;
 import org.springframework.context.annotation.Configuration;
