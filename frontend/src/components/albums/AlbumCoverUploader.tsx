@@ -1,4 +1,4 @@
-import { useRef, useState, useEffect } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { Button } from 'primereact/button';
 import { AlbumService } from '../../services/AlbumService';
 import type { AlbumDTO } from '../../types/api';
@@ -8,16 +8,15 @@ type Props =
   | { mode: 'update'; albumId: number; onUploaded?: (updated?: AlbumDTO) => void | Promise<void>; buttonLabel?: string; buttonIcon?: string };
 
 export default function AlbumCoverUploader(props: Props) {
-  const inputRef = useRef<HTMLInputElement | null>(null);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const [file, setFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const fileInputRef = useRef<HTMLInputElement | null>(null);
-
 
   const label = props.buttonLabel ?? (props.mode === 'update' ? 'Trocar capa' : 'Selecionar capa');
+  const icon = props.buttonIcon ?? 'pi pi-upload';
 
   useEffect(() => {
     if (!file) {
@@ -29,17 +28,13 @@ export default function AlbumCoverUploader(props: Props) {
     return () => URL.revokeObjectURL(url);
   }, [file]);
 
-  function openPicker() {
-    setError(null);
-    inputRef.current?.click();
-  }
-
   function clear() {
     setError(null);
     setUploading(false);
     setFile(null);
 
-    if (inputRef.current) inputRef.current.value = '';
+    // 🔥 MUITO IMPORTANTE: limpar o valor do input REAL
+    if (fileInputRef.current) fileInputRef.current.value = '';
 
     if (props.mode === 'create') {
       props.onPickedFile(null);
@@ -59,7 +54,12 @@ export default function AlbumCoverUploader(props: Props) {
     const msg = validate(f);
     if (msg) {
       setError(msg);
-      clear();
+
+      // garante que dá pra selecionar o mesmo arquivo de novo
+      if (fileInputRef.current) fileInputRef.current.value = '';
+      setFile(null);
+
+      if (props.mode === 'create') props.onPickedFile(null);
       return;
     }
 
@@ -85,62 +85,50 @@ export default function AlbumCoverUploader(props: Props) {
   return (
     <div style={{ display: 'grid', gap: 10 }}>
       <input
-         ref={fileInputRef}
+        ref={fileInputRef}
         type="file"
         accept="image/*"
         style={{ display: 'none' }}
         onChange={onChange}
       />
+
       <Button
-                    label="Selecionar capa"
-                    icon="pi pi-upload"
-                    className="app-button-secondary"
-                    onClick={() => fileInputRef.current?.click()}
-                    
-                  />
+        label={label}
+        icon={icon}
+        className="app-button-secondary"
+        onClick={() => {
+          setError(null);
+          fileInputRef.current?.click();
+        }}
+        disabled={uploading}
+      />
 
       {previewUrl ? (
-        <div style={{ width: 180, aspectRatio: '1 / 1', borderRadius: 10, overflow: 'hidden', border: '1px solid rgba(0,0,0,0.12)' }}>
+        <div
+          style={{
+            width: 180,
+            aspectRatio: '1 / 1',
+            borderRadius: 10,
+            overflow: 'hidden',
+            border: '1px solid rgba(0,0,0,0.12)',
+          }}
+        >
           <img src={previewUrl} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
         </div>
       ) : null}
 
-      <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-        <button
-          type="button"
-          onClick={openPicker}
-          disabled={uploading}
-          style={{
-            display: 'inline-flex',
-            gap: 8,
-            alignItems: 'center',
-            padding: '10px 12px',
-            borderRadius: 8,
-            border: '1px solid rgba(0,0,0,0.15)',
-            background: 'white',
-            cursor: uploading ? 'not-allowed' : 'pointer'
-          }}
-        >
-          <span>{uploading ? 'Enviando...' : label}</span>
-        </button>
-
-        {file ? (
-          <button
+      {file ? (
+        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+          <Button
             type="button"
             onClick={clear}
+            className="app-button-secondary"
             disabled={uploading}
-            style={{
-              padding: '10px 12px',
-              borderRadius: 8,
-              border: '1px solid rgba(0,0,0,0.15)',
-              background: 'white',
-              cursor: uploading ? 'not-allowed' : 'pointer'
-            }}
-          >
-            Limpar
-          </button>
-        ) : null}
-      </div>
+            label="Remover"
+            icon="pi pi-times"
+          />
+        </div>
+      ) : null}
 
       {error ? <small style={{ color: '#d32f2f' }}>{error}</small> : null}
       {file ? <small style={{ opacity: 0.75 }}>{file.name}</small> : null}
