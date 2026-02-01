@@ -1,0 +1,69 @@
+version: '3.8'
+
+services:
+  postgreslucas04310316140:
+    image: postgres:15
+    container_name: artist-album-postgres
+    environment:
+      POSTGRES_DB: artist_album_db
+      POSTGRES_USER: artist_user
+      POSTGRES_PASSWORD: artist_pass
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - artist-network
+
+  miniolucas04310316140:
+    image: minio/minio
+    container_name: artist-album-minio
+    environment:
+      MINIO_ACCESS_KEY: admin123
+      MINIO_SECRET_KEY: admin123
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - minio_data:/data
+    command: server /data --console-address ":9001"
+    networks:
+      - artist-network
+
+  apilucas04310316140:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.backend
+    container_name: artist-album-api
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgreslucas04310316140:5432/artist_album_db
+      SPRING_DATASOURCE_USERNAME: artist_user
+      SPRING_DATASOURCE_PASSWORD: artist_pass
+      MINIO_ENDPOINT: http://miniolucas04310316140:9000
+      MINIO_PUBLIC_ENDPOINT: http://localhost:9000
+      MINIO_ACCESS_KEY: admin123
+      MINIO_SECRET_KEY: admin123
+      MINIO_BUCKET_NAME: artist-album-covers
+      JWT_SECRET: 31031994lucashenriquetascadearaujo04310316140
+      JWT_EXPIRATION: 300000
+    depends_on:
+      - postgreslucas04310316140
+      - miniolucas04310316140
+    networks:
+      - artist-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/api/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+volumes:
+  postgres_data:
+  minio_data:
+
+networks:
+  artist-network:
+    driver: bridge
