@@ -4,6 +4,7 @@ import { Button } from 'primereact/button';
 import { Card } from 'primereact/card';
 import { Carousel } from 'primereact/carousel';
 import { Message } from 'primereact/message';
+import { InputText } from 'primereact/inputtext';
 import { AlbumService } from '../../services/AlbumService';
 import AlbumCoverUploader from './AlbumCoverUploader';
 import type { AlbumCapaDTO, AlbumResponseDTO } from '../../types/api';
@@ -26,6 +27,7 @@ export default function AlbumDetailDialog({ visible, albumId, onHide }: Props) {
   const [extraFiles, setExtraFiles] = useState<File[]>([]);
   const [uploadingExtras, setUploadingExtras] = useState(false);
   const [extraError, setExtraError] = useState<string | null>(null);
+  const [visibleCoverUrl, setVisibleCoverUrl] = useState<string | null>(null);
   const extraInputRef = useRef<HTMLInputElement | null>(null);
 
   async function load() {
@@ -85,6 +87,14 @@ export default function AlbumDetailDialog({ visible, albumId, onHide }: Props) {
               Principal
             </span>
           ) : null}
+        </div>
+        <div className="flex" style={{ justifyContent: 'flex-end', marginTop: 8 }}>
+          <Button
+            label="Ver URL da imagem"
+            icon="pi pi-link"
+            className="app-button-secondary"
+            onClick={() => setVisibleCoverUrl(capa.urlAssinada ?? null)}
+          />
         </div>
       </div>
     );
@@ -158,19 +168,41 @@ export default function AlbumDetailDialog({ visible, albumId, onHide }: Props) {
             )}
           </div>
 
+           {/* <div style={{ display: 'grid', gap: 8 }}>
+            <div style={{ fontWeight: 600 }}>URL da imagem</div>
+            <div className="flex gap-2" style={{ flexWrap: 'wrap' }}>
+              <Button
+                label="Ver URL da imagem"
+                icon="pi pi-link"
+                className="app-button-secondary"
+                onClick={() => setVisibleCoverUrl(coverUrl)}
+                disabled={!coverUrl}
+              />
+              <Button
+                label="Limpar"
+                icon="pi pi-times"
+                className="app-button-secondary"
+                onClick={() => setVisibleCoverUrl(null)}
+                disabled={!visibleCoverUrl}
+              />
+            </div>
+            {visibleCoverUrl ? <InputText className="w-full" value={visibleCoverUrl} readOnly /> : null}
+            {!coverUrl ? <small style={{ opacity: 0.7 }}>Sem URL disponível para a capa principal.</small> : null}
+          </div> */}
+
           <div className="flex gap-2" style={{ justifyContent: 'flex-end', flexWrap: 'wrap' }}>
             <Button label="Editar" icon="pi pi-pencil" className="app-button-secondary" onClick={() => setEditVisible(true)} />
-            {id ? (
+            {/* {id ? (
               <AlbumCoverUploader
                 mode="update"
                 albumId={id}
                 buttonLabel="Trocar capa"
                 onUploaded={async () => load()}
               />
-            ) : null}
+            ) : null} */}
           </div>
 
-          <div style={{ display: 'grid', gap: 8 }}>
+          {/* <div style={{ display: 'grid', gap: 8 }}>
             <div style={{ fontWeight: 600 }}>Adicionar novas capas</div>
             <input
               ref={extraInputRef}
@@ -202,7 +234,7 @@ export default function AlbumDetailDialog({ visible, albumId, onHide }: Props) {
               </small>
             ) : null}
             {extraError ? <small style={{ color: '#d32f2f' }}>{extraError}</small> : null}
-          </div>
+          </div> */}
 
           {loading ? <Message severity="info" text="Carregando..." /> : null}
         </div>
