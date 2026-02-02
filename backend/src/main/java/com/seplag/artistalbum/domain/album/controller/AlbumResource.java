@@ -4,7 +4,9 @@ import com.seplag.artistalbum.domain.album.dto.AlbumCapaDTO;
 import com.seplag.artistalbum.domain.album.dto.AlbumDTO;
 import com.seplag.artistalbum.domain.album.dto.AlbumRequestDTO;
 import com.seplag.artistalbum.domain.album.dto.AlbumResponseDTO;
+import com.seplag.artistalbum.domain.album.model.AlbumCapaModel;
 import com.seplag.artistalbum.domain.album.model.AlbumModel;
+import com.seplag.artistalbum.domain.album.repository.AlbumCapaRepository;
 import com.seplag.artistalbum.domain.album.repository.AlbumRepository;
 import com.seplag.artistalbum.domain.album.service.AlbumService;
 import com.seplag.artistalbum.shared.exception.ResourceNotFoundException;
@@ -36,11 +38,14 @@ public class AlbumResource {
     private final MinioService minioService;
 
     private final AlbumRepository albumRepository;
+    private final AlbumCapaRepository albumCapaRepository;
 
-    public AlbumResource(AlbumService albumService, MinioService minioService, AlbumRepository albumRepository) {
+
+    public AlbumResource(AlbumService albumService, MinioService minioService, AlbumRepository albumRepository, AlbumCapaRepository albumCapaRepository) {
         this.albumService = albumService;
         this.minioService = minioService;
         this.albumRepository = albumRepository;
+        this.albumCapaRepository = albumCapaRepository;
     }
 
     @PostMapping
@@ -150,21 +155,57 @@ public class AlbumResource {
                 return ResponseEntity.notFound().build();
             }
             byte[] dadosImagem = minioService.downloadFile(capaAlbum);
-            String tipoConteudo = "image/jpeg";
-            if (capaAlbum.toLowerCase().endsWith(".png")) {
-                tipoConteudo = "image/png";
-            } else if (capaAlbum.toLowerCase().endsWith(".gif")) {
-                tipoConteudo = "image/gif";
-            }
+//            String tipoConteudo = "image/jpeg";
+//            if (capaAlbum.toLowerCase().endsWith(".png")) {
+//                tipoConteudo = "image/png";
+//            } else if (capaAlbum.toLowerCase().endsWith(".gif")) {
+//                tipoConteudo = "image/gif";
+//            }
+//            ByteArrayResource recurso = new ByteArrayResource(dadosImagem);
+//            return ResponseEntity.ok()
+//                    .contentType(MediaType.parseMediaType(tipoConteudo))
+//                    .contentLength(dadosImagem.length)
+//                    .body(recurso);
+//        } catch (Exception e) {
+//            return ResponseEntity.notFound().build();
+//        }
             ByteArrayResource recurso = new ByteArrayResource(dadosImagem);
             return ResponseEntity.ok()
-                    .contentType(MediaType.parseMediaType(tipoConteudo))
+                    .contentType(MediaType.parseMediaType(definirTipoConteudo(capaAlbum)))
                     .contentLength(dadosImagem.length)
                     .body(recurso);
         } catch (Exception e) {
             return ResponseEntity.notFound().build();
         }
     }
+    @GetMapping("/{id}/capas/{idCapa}/arquivo")
+    @Operation(summary = "Obter imagem de capa do álbum por capa específica")
+    public ResponseEntity<Resource> obterImagemCapaAlbumPorId(
+            @PathVariable Long id,
+            @PathVariable Long idCapa
+    ) {
+        try {
+            AlbumCapaModel capa = albumCapaRepository.findById(idCapa)
+                    .orElseThrow(() -> new ResourceNotFoundException("Capa não encontrada com id: " + idCapa));
+            if (capa.getAlbum() == null || !id.equals(capa.getAlbum().getIdAlbum())) {
+                return ResponseEntity.notFound().build();
+            }
+
+            String chaveObjeto = capa.getChaveObjeto();
+            if (chaveObjeto == null || chaveObjeto.isBlank()) {
+                return ResponseEntity.notFound().build();
+            }
+            byte[] dadosImagem = minioService.downloadFile(chaveObjeto);
+            ByteArrayResource recurso = new ByteArrayResource(dadosImagem);
+            return ResponseEntity.ok()
+                    .contentType(MediaType.parseMediaType(definirTipoConteudo(chaveObjeto)))
+                    .contentLength(dadosImagem.length)
+                    .body(recurso);
+        } catch (Exception e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
 
     @GetMapping("/{id}/capas")
     @Operation(summary = "Listar capas do álbum")
@@ -181,6 +222,23 @@ public class AlbumResource {
     ) {
         albumService.definirCapaPrincipal(id, idCapa);
         return ResponseEntity.noContent().build();
+    }
+
+    private String definirTipoConteudo(String caminho) {
+        String lower = caminho == null ? "" : caminho.toLowerCase();
+        if (lower.endsWith(".png")) {
+            return "image/png";
+        }
+        if (lower.endsWith(".gif")) {
+            return "image/gif";
+        }
+        if (lower.endsWith(".webp")) {
+            return "image/webp";
+        }
+        if (lower.endsWith(".svg")) {
+            return "image/svg+xml";
+        }
+        return "image/jpeg";
     }
     /* =========================
 

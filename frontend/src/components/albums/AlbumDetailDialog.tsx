@@ -28,6 +28,8 @@ export default function AlbumDetailDialog({ visible, albumId, onHide }: Props) {
   const [uploadingExtras, setUploadingExtras] = useState(false);
   const [extraError, setExtraError] = useState<string | null>(null);
   const [visibleCoverUrl, setVisibleCoverUrl] = useState<string | null>(null);
+  const [coverFallbackActive, setCoverFallbackActive] = useState(false);
+  const [carouselFallbacks, setCarouselFallbacks] = useState<Record<number, boolean>>({});
   const extraInputRef = useRef<HTMLInputElement | null>(null);
 
   async function load() {
@@ -64,13 +66,33 @@ export default function AlbumDetailDialog({ visible, albumId, onHide }: Props) {
     load();
   }, [visible, id]);
 
+  useEffect(() => {
+    setCoverFallbackActive(false);
+    setCarouselFallbacks({});
+  }, [id]);
+
+
   const carouselItems = capas.filter((capa) => !!capa.urlAssinada);
 
   function renderCover(capa: AlbumCapaDTO) {
+    const capaId = capa.idCapa ?? 0;
+    const fallbackActive = capaId ? carouselFallbacks[capaId] : false;
+    const imageUrl =
+      fallbackActive && id && capaId
+        ? `/v1/albums/${id}/capas/${capaId}/arquivo`
+        : (capa.urlAssinada ?? '');
     return (
       <div className="p-2" style={{ direction: 'ltr' }}>
         <div style={{ position: 'relative', borderRadius: 8, overflow: 'hidden', background: '#f4f4f4' }}>
-          <img src={capa.urlAssinada ?? ''} style={{ width: '100%', height: 260, objectFit: 'cover' }} />
+          {/* <img src={capa.urlAssinada ?? ''} style={{ width: '100%', height: 260, objectFit: 'cover' }} /> */}
+          <img
+            src={imageUrl}
+            style={{ width: '100%', height: 260, objectFit: 'cover' }}
+            onError={() => {
+              if (!capaId || fallbackActive) return;
+              setCarouselFallbacks((prev) => ({ ...prev, [capaId]: true }));
+            }}
+          />
           {capa.principal ? (
             <span
               style={{
@@ -155,9 +177,17 @@ export default function AlbumDetailDialog({ visible, albumId, onHide }: Props) {
                 showNavigators={carouselItems.length > 1}
               />
             ) : (
-              <div style={{ width: '100%', aspectRatio: '1 / 1', borderRadius: 8, overflow: 'hidden', background: '#f4f4f4', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                {coverUrl ? (
-                  <img src={coverUrl} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              // <div style={{ width: '100%', aspectRatio: '1 / 1', borderRadius: 8, overflow: 'hidden', background: '#f4f4f4', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <div style={{ width: '100%', aspectRatio: '1 / 1', borderRadius: 8, overflow: 'hidden', background: '#f4f4f4', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>  
+              {coverUrl ? (
+                  // <img src={coverUrl} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  <img
+                    src={coverFallbackActive && id ? `/v1/albums/capa/${id}` : coverUrl}
+                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                    onError={() => {
+                      if (!coverFallbackActive) setCoverFallbackActive(true);
+                    }}
+                  />
                 ) : (
                   <div style={{ opacity: 0.7, textAlign: 'center' }}>
                     <i className="pi pi-image" style={{ fontSize: 28 }} />
