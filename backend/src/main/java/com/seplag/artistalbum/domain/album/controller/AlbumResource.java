@@ -43,30 +43,18 @@ public class AlbumResource {
         this.albumRepository = albumRepository;
     }
 
-    /* =========================
-      CREATE
-      POST /albums
-      ========================= */
     @PostMapping
     public ResponseEntity<AlbumResponseDTO> criarAlbum(@Valid @RequestBody AlbumRequestDTO request) {
         AlbumResponseDTO criado = albumService.criarAlbum(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(criado);
     }
 
-    /* =========================
-       READ
-       GET /albums/{idAlbum}
-       ========================= */
     @GetMapping("/{idAlbum}")
     public ResponseEntity<AlbumResponseDTO> obterAlbumPorId(@PathVariable Long idAlbum) {
         AlbumResponseDTO dto = albumService.obterAlbumPorId(idAlbum);
         return ResponseEntity.ok(dto);
     }
 
-    /* =========================
-       UPDATE
-       PUT /albums/{idAlbum}
-       ========================= */
     @PutMapping("/{idAlbum}")
     public ResponseEntity<AlbumResponseDTO> atualizarAlbum(
             @PathVariable Long idAlbum,
@@ -76,10 +64,6 @@ public class AlbumResource {
         return ResponseEntity.ok(atualizado);
     }
 
-    /* =========================
-       DELETE
-       DELETE /albums/{idAlbum}
-       ========================= */
     @DeleteMapping("/{idAlbum}")
     public ResponseEntity<Void> deletarAlbum(@PathVariable Long idAlbum) {
         albumService.deletarAlbum(idAlbum);
@@ -153,6 +137,15 @@ public class AlbumResource {
             AlbumResponseDTO album = albumService.obterAlbumPorId(idAlbum);
 
             String capaAlbum = album.getCapaAlbum();
+            if (capaAlbum == null) {
+                List<AlbumCapaDTO> capas = albumService.listarCapas(idAlbum);
+                capaAlbum = capas.stream()
+                        .filter(AlbumCapaDTO::isPrincipal)
+                        .map(AlbumCapaDTO::getChaveObjeto)
+                        .findFirst()
+                        .or(() -> capas.stream().findFirst().map(AlbumCapaDTO::getChaveObjeto))
+                        .orElse(null);
+            }
             if (capaAlbum == null) {
                 return ResponseEntity.notFound().build();
             }

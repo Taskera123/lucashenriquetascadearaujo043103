@@ -10,6 +10,8 @@ import { BandaService } from '../../services/BandaService';
 import { updates$ } from '../../state/wsUpdates.store';
 import type { AlbumDTO, BandaResponseDTO } from '../../types/api';
 import AlbumFormDialog from '../../components/albums/AlbumFormDialog';
+import resolveApiUrl from '../../utils/resolveApiUrl';
+
 
 export default function AlbumListPage() {
   const nav = useNavigate();
@@ -116,7 +118,8 @@ export default function AlbumListPage() {
 
   async function ensureCoverUrl(albumId?: number, signed?: string | null) {
     if (!albumId) return;
-    if (signed && signed.trim()) return;
+    // if (signed && signed.trim()) return;
+    if (signed && signed.trim().startsWith('http')) return;
     if (coverUrlByAlbumId[albumId]) return;
     try {
       const { data } = await AlbumService.obterUrlCapa(albumId);
@@ -125,7 +128,11 @@ export default function AlbumListPage() {
   }
 
   function resolveCoverUrl(a: AlbumDTO) {
-    if (a.urlImagemCapaAssinada?.trim()) return a.urlImagemCapaAssinada;
+    // if (a.urlImagemCapaAssinada?.trim()) return a.urlImagemCapaAssinada;
+    const signed = a.urlImagemCapaAssinada?.trim();
+    if (signed && signed.startsWith('http')) return signed;
+    if (a.urlImagemCapa?.trim()) return resolveApiUrl(a.urlImagemCapa.trim());
+    if (signed) return resolveApiUrl(signed);
     if (a.id && coverUrlByAlbumId[a.id]) return coverUrlByAlbumId[a.id];
     return null;
   }

@@ -8,6 +8,7 @@ import { CatalogoService } from '../../services/CatalogoService';
 import type { AlbumDTO, ArtistaResponseDTO, BandaResponseDTO, CatalogoResponseDTO } from '../../types/api';
 import { theme$, toggleTheme } from '../../state/theme.store';
 import { updates$ } from '../../state/wsUpdates.store';
+import resolveApiUrl from '../../utils/resolveApiUrl';
 
 
 export default function HomePage() {
@@ -47,7 +48,7 @@ export default function HomePage() {
         || (event.entity === 'banda' && event.action === 'created')
       ) {
         loadCatalogo();
-      }
+      }                                                       
     });
     return () => sub.unsubscribe();
   }, [loadCatalogo]);
@@ -73,7 +74,9 @@ export default function HomePage() {
   }, [bandas]);
 
   function resolveAlbumCover(album: AlbumDTO) {
-    return album.urlImagemCapaAssinada?.trim() || album.urlImagemCapa?.trim() || '';
+    // return album.urlImagemCapaAssinada?.trim() || album.urlImagemCapa?.trim() || '';
+    const url = album.urlImagemCapaAssinada?.trim() || album.urlImagemCapa?.trim() || '';
+    return resolveApiUrl(url);
   }
 
   const pageBg = 'var(--surface-0)';

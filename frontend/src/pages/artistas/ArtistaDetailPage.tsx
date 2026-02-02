@@ -9,6 +9,7 @@ import type { AlbumDTO, ArtistaResponseDTO } from '../../types/api';
 import AlbumCoverUploader from '../../components/albums/AlbumCoverUploader';
 import ArtistFormDialog from '../../components/artistas/ArtistFormDialog';
 import AlbumFormDialog from '../../components/albums/AlbumFormDialog';
+import resolveApiUrl from '../../utils/resolveApiUrl';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8080/albumartistaapi';
 
@@ -73,7 +74,11 @@ export default function ArtistDetailPage() {
   }
 
   function resolveCoverUrl(a: AlbumDTO) {
-    if (a.urlImagemCapaAssinada?.trim()) return a.urlImagemCapaAssinada;
+    // if (a.urlImagemCapaAssinada?.trim()) return a.urlImagemCapaAssinada;
+    const signed = a.urlImagemCapaAssinada?.trim();
+    if (signed && signed.startsWith('http')) return signed;
+    if (a.urlImagemCapa?.trim()) return resolveApiUrl(a.urlImagemCapa.trim());
+    if (signed) return resolveApiUrl(signed);
     if (a.id && coverUrlByAlbumId[a.id]) return coverUrlByAlbumId[a.id];
     return null;
   }

@@ -30,6 +30,7 @@ public class MinioService {
         this.minioClientPublic = MinioClient.builder()
                 .endpoint(publicEndpoint)
                 .credentials(accessKey, secretKey)
+                .region("us-east-1")
                 .build();
     }
 
@@ -110,11 +111,13 @@ public class MinioService {
 
     public String generatePresignedUrl30Min(String objectKey) throws Exception {
         return minioClientPublic.getPresignedObjectUrl(
+//          return minioClient.getPresignedObjectUrl(
                 GetPresignedObjectUrlArgs.builder()
                         .method(Method.GET)
                         .bucket(bucketName)
                         .object(objectKey)
-                        .expiry(30, TimeUnit.SECONDS)
+//                        .expiry(30, TimeUnit.SECONDS)
+                        .expiry(30, TimeUnit.MINUTES)
                         .build()
         );
     }

@@ -11,6 +11,8 @@ import { Carousel } from 'primereact/carousel';
 import ArtistFormDialog from '../../components/artistas/ArtistFormDialog';
 import ArtistDetailDialog from '../../components/artistas/ArtistDetailDialog';
 import { updates$ } from '../../state/wsUpdates.store';
+import resolveApiUrl from '../../utils/resolveApiUrl';
+
 
 export default function ArtistListPage() {
   const nav = useNavigate();
@@ -78,7 +80,9 @@ export default function ArtistListPage() {
   }, [albums]);
 
   function resolveAlbumCover(album: AlbumDTO) {
-    return album.urlImagemCapaAssinada?.trim() || album.urlImagemCapa?.trim() || '';
+    // return album.urlImagemCapaAssinada?.trim() || album.urlImagemCapa?.trim() || '';
+    const url = album.urlImagemCapaAssinada?.trim() || album.urlImagemCapa?.trim() || '';
+    return resolveApiUrl(url);
   }
 
   const albumTemplate = (album: AlbumDTO) => {

@@ -8,6 +8,8 @@ import { AlbumService } from '../../services/AlbumService';
 import type { AlbumDTO, ArtistaResponseDTO } from '../../types/api';
 import AlbumFormDialog from '../../components/albums/AlbumFormDialog';
 import ArtistFormDialog from '../../components/artistas/ArtistFormDialog';
+import resolveApiUrl from '../../utils/resolveApiUrl';
+
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8080/albumartistaapi';
 
@@ -58,7 +60,8 @@ export default function ArtistDetailDialog({ visible, artistId, onHide }: Props)
 
   async function ensureCoverUrl(albumId?: number, signed?: string | null) {
     if (!albumId) return;
-    if (signed && signed.trim()) return;
+    // if (signed && signed.trim()) return;
+    if (signed && signed.trim().startsWith('http')) return;
     if (coverUrlByAlbumId[albumId]) return;
     try {
       const { data } = await AlbumService.obterUrlCapa(albumId);
@@ -67,7 +70,11 @@ export default function ArtistDetailDialog({ visible, artistId, onHide }: Props)
   }
 
   function resolveCoverUrl(a: AlbumDTO) {
-    if (a.urlImagemCapaAssinada?.trim()) return a.urlImagemCapaAssinada;
+    // if (a.urlImagemCapaAssinada?.trim()) return a.urlImagemCapaAssinada;
+    const signed = a.urlImagemCapaAssinada?.trim();
+    if (signed && signed.startsWith('http')) return signed;
+    if (a.urlImagemCapa?.trim()) return resolveApiUrl(a.urlImagemCapa.trim());
+    if (signed) return resolveApiUrl(signed);
     if (a.id && coverUrlByAlbumId[a.id]) return coverUrlByAlbumId[a.id];
     return null;
   }
