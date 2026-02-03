@@ -28,7 +28,7 @@ export default function ArtistDetailPage() {
   const [albums, setAlbums] = useState<AlbumDTO[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [coverUrlByAlbumId, setCoverUrlByAlbumId] = useState<Record<number, string>>({});
+  // const [coverUrlByAlbumId, setCoverUrlByAlbumId] = useState<Record<number, string>>({});
   const [dialogVisible, setDialogVisible] = useState(false);
   const [albumDialogVisible, setAlbumDialogVisible] = useState(false);
 
@@ -63,15 +63,15 @@ export default function ArtistDetailPage() {
     return () => sub.unsubscribe();
   }, [artistId, load]);
 
-  async function ensureCoverUrl(albumId?: number, signed?: string | null) {
-    if (!albumId) return;
-    if (signed && signed.trim()) return;
-    if (coverUrlByAlbumId[albumId]) return;
-    try {
-      const { data } = await AlbumService.obterUrlCapa(albumId);
-      if (typeof data === 'string' && data.trim()) setCoverUrlByAlbumId((p) => ({ ...p, [albumId]: data }));
-    } catch {}
-  }
+  // async function ensureCoverUrl(albumId?: number, signed?: string | null) {
+  //   if (!albumId) return;
+  //   if (signed && signed.trim()) return;
+  //   if (coverUrlByAlbumId[albumId]) return;
+  //   try {
+  //     const { data } = await AlbumService.obterUrlCapa(albumId);
+  //     if (typeof data === 'string' && data.trim()) setCoverUrlByAlbumId((p) => ({ ...p, [albumId]: data }));
+  //   } catch {}
+  // }
 
   function resolveCoverUrl(a: AlbumDTO) {
     // if (a.urlImagemCapaAssinada?.trim()) return a.urlImagemCapaAssinada;
@@ -79,13 +79,13 @@ export default function ArtistDetailPage() {
     if (signed && signed.startsWith('http')) return signed;
     if (a.urlImagemCapa?.trim()) return resolveApiUrl(a.urlImagemCapa.trim());
     if (signed) return resolveApiUrl(signed);
-    if (a.id && coverUrlByAlbumId[a.id]) return coverUrlByAlbumId[a.id];
+    // if (a.id && coverUrlByAlbumId[a.id]) return coverUrlByAlbumId[a.id];
     return null;
   }
 
   function itemTemplate(a: AlbumDTO) {
     const coverUrl = resolveCoverUrl(a);
-    if (a.id) ensureCoverUrl(a.id, a.urlImagemCapaAssinada ?? null);
+    // if (a.id) ensureCoverUrl(a.id, a.urlImagemCapaAssinada ?? null);
 
     return (
       <div className="p-2">
@@ -125,7 +125,8 @@ export default function ArtistDetailPage() {
       albumId={a.id}
       buttonLabel="Trocar capa"
       onUploaded={async () => {
-        await ensureCoverUrl(a.id!, null);
+        // await ensureCoverUrl(a.id!, null);
+      await load();  
       }}
     />
   </div>

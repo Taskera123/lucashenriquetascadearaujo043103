@@ -49,7 +49,8 @@ export default function BandDetailDialog({ visible, bandId, onHide }: Props) {
       header={band?.nomeBanda ?? 'Banda'}
       visible={visible}
       onHide={onHide}
-      style={{ width: 'min(900px, 95vw)' }}
+      // style={{ width: 'min(900px, 95vw)' }}
+      className="app-dialog"
       modal
     >
       {error ? <Message severity="error" text={error} className="mb-3" /> : null}

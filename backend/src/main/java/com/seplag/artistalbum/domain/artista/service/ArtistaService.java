@@ -243,7 +243,8 @@ public class ArtistaService {
                         minioService.generatePresignedUrl30Min(capaPrincipal)
                 );
             } catch (Exception e) {
-                dto.setUrlImagemCapaAssinada(basePath + "/capa/url");
+//                dto.setUrlImagemCapaAssinada(basePath + "/capa/url");
+                dto.setUrlImagemCapaAssinada(null);
             }
         }
         return dto;

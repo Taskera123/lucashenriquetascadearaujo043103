@@ -15,7 +15,8 @@ public class TaxaLimiteConfig {
     public Bucket criarNovoBucket() {
         // 10 requisições por minuto
         return Bucket.builder()
-                .addLimit(Bandwidth.classic(10000, Refill.intervally(10000, Duration.ofMinutes(1))))
+//                .addLimit(Bandwidth.classic(10000, Refill.intervally(10000, Duration.ofMinutes(1))))
+                .addLimit(Bandwidth.classic(10, Refill.intervally(10, Duration.ofMinutes(1))))
                 .build();
     }
 }

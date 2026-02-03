@@ -30,7 +30,7 @@ public class OpenApiConfig {
                 .servers(List.of(
                         new Server().url("http://localhost:8080/albumartistaapi").description("Servidor Local"),
                         new Server().url("http://localhost:3001").description("Interface Web Local")
-                ))// 1) Declara o esquema de segurança (Bearer JWT)
+                ))
                 .components(new Components().addSecuritySchemes(SECURITY_SCHEME_NAME,
                         new SecurityScheme()
                                 .name(SECURITY_SCHEME_NAME)
@@ -38,7 +38,6 @@ public class OpenApiConfig {
                                 .scheme("bearer")
                                 .bearerFormat("JWT")
                 ))
-                // 2) Aplica segurança por padrão em todas as operações
                 .addSecurityItem(new SecurityRequirement().addList(SECURITY_SCHEME_NAME));
     }
 }

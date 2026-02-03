@@ -35,6 +35,7 @@ export default function AlbumFormDialog({ visible, mode, artistId, albumId, onHi
   const [principalUpdatingId, setPrincipalUpdatingId] = useState<number | null>(null);
   const [principalError, setPrincipalError] = useState<string | null>(null);
   const [extraFiles, setExtraFiles] = useState<File[]>([]);
+  const [extraPreviewUrls, setExtraPreviewUrls] = useState<string[]>([]);
   const [uploadingExtras, setUploadingExtras] = useState(false);
   const [extraError, setExtraError] = useState<string | null>(null);
   const extraInputRef = useRef<HTMLInputElement | null>(null);
@@ -81,6 +82,19 @@ export default function AlbumFormDialog({ visible, mode, artistId, albumId, onHi
       setLoading(false);
     }
   }, [visible, mode, albumId, artistId]);
+
+  useEffect(() => {
+    if (!extraFiles.length) {
+      setExtraPreviewUrls([]);
+      return;
+    }
+    const urls = extraFiles.map((file) => URL.createObjectURL(file));
+    setExtraPreviewUrls(urls);
+    return () => {
+      urls.forEach((url) => URL.revokeObjectURL(url));
+    };
+  }, [extraFiles]);
+
 
   useEffect(() => {
     if (!visible) return;
@@ -358,7 +372,7 @@ export default function AlbumFormDialog({ visible, mode, artistId, albumId, onHi
                   style={{ display: 'none' }}
                   onChange={handleExtraChange}
                 />
-                <div className="flex gap-2" style={{ flexWrap: 'wrap' }}>
+                <div className="flex" style={{ flexWrap: 'wrap', gap: 12 }}>
                   <Button
                     label="Selecionar imagens"
                     icon="pi pi-images"
@@ -374,6 +388,25 @@ export default function AlbumFormDialog({ visible, mode, artistId, albumId, onHi
                     disabled={!extraFiles.length || uploadingExtras}
                   />
                 </div>
+                {extraPreviewUrls.length ? (
+                  <div style={{ display: 'grid', gap: 8, gridTemplateColumns: 'repeat(auto-fill, minmax(80px, 1fr))' }}>
+                    {extraPreviewUrls.map((url, index) => (
+                      <div
+                        key={`${url}-${index}`}
+                        style={{
+                          width: '100%',
+                          aspectRatio: '1 / 1',
+                          borderRadius: 8,
+                          overflow: 'hidden',
+                          border: '1px solid rgba(0,0,0,0.12)',
+                          background: '#f4f4f4',
+                        }}
+                      >
+                        <img src={url} alt={`Prévia ${index + 1}`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                      </div>
+                    ))}
+                  </div>
+                ) : null}
                 {extraFiles.length ? (
                   <small style={{ opacity: 0.7 }}>
                     {extraFiles.length} arquivo(s) selecionado(s). A primeira capa permanece como principal.

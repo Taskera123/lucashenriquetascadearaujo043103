@@ -115,7 +115,8 @@ export default function ArtistFormDialog({ visible, mode, artistId, onHide, onSa
       header={title}
       visible={visible}
       onHide={onHide}
-      style={{ width: 'min(900px, 95vw)' }}
+      // style={{ width: 'min(900px, 95vw)' }}
+      className="app-dialog"
       modal
       footer={footer}
     >

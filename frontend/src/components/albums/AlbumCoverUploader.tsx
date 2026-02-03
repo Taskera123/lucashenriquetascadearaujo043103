@@ -96,6 +96,7 @@ export default function AlbumCoverUploader(props: Props) {
         label={label}
         icon={icon}
         className="app-button-secondary"
+        style={{ alignSelf: 'flex-start' }}
         onClick={() => {
           setError(null);
           fileInputRef.current?.click();

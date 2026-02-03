@@ -50,12 +50,35 @@ body {
   width: min(900px, 95vw);
 }
 
+.app-dialog .p-dialog-content {
+  max-height: calc(90vh - 6rem);
+  overflow-y: auto;
+}
+
 .app-carousel .p-carousel-item {
   padding: 0 6px;
 }
 
 .app-carousel .p-carousel-content {
   border-radius: 12px;
+}
+
+.album-grid .p-dataview-content .p-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(1, 320px));
+  gap: 16px;
+  justify-content: center;
+}
+
+.album-grid .p-dataview-content .p-grid > [class*='p-col'] {
+  width: auto;
+  padding: 0;
+}
+
+@media (max-width: 768px) {
+  .album-grid .p-dataview-content .p-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 h1 {

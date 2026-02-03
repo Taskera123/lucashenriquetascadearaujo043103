@@ -21,7 +21,7 @@ export default function AlbumListPage() {
   const [albums, setAlbums] = useState<AlbumDTO[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [coverUrlByAlbumId, setCoverUrlByAlbumId] = useState<Record<number, string>>({});
+  // const [coverUrlByAlbumId, setCoverUrlByAlbumId] = useState<Record<number, string>>({});
   const [bands, setBands] = useState<BandaResponseDTO[]>([]);
   const [selectedBandId, setSelectedBandId] = useState<number | null>(null);
   const [selectedArtistId, setSelectedArtistId] = useState<number | null>(null);
@@ -116,16 +116,16 @@ export default function AlbumListPage() {
     return filteredAlbums.slice(start, start + rows);
   }, [filteredAlbums, page, rows]);
 
-  async function ensureCoverUrl(albumId?: number, signed?: string | null) {
-    if (!albumId) return;
-    // if (signed && signed.trim()) return;
-    if (signed && signed.trim().startsWith('http')) return;
-    if (coverUrlByAlbumId[albumId]) return;
-    try {
-      const { data } = await AlbumService.obterUrlCapa(albumId);
-      if (typeof data === 'string' && data.trim()) setCoverUrlByAlbumId((p) => ({ ...p, [albumId]: data }));
-    } catch {}
-  }
+  // async function ensureCoverUrl(albumId?: number, signed?: string | null) {
+  //   if (!albumId) return;
+  //   // if (signed && signed.trim()) return;
+  //   if (signed && signed.trim().startsWith('http')) return;
+  //   if (coverUrlByAlbumId[albumId]) return;
+  //   try {
+  //     const { data } = await AlbumService.obterUrlCapa(albumId);
+  //     if (typeof data === 'string' && data.trim()) setCoverUrlByAlbumId((p) => ({ ...p, [albumId]: data }));
+  //   } catch {}
+  // }
 
   function resolveCoverUrl(a: AlbumDTO) {
     // if (a.urlImagemCapaAssinada?.trim()) return a.urlImagemCapaAssinada;
@@ -133,17 +133,18 @@ export default function AlbumListPage() {
     if (signed && signed.startsWith('http')) return signed;
     if (a.urlImagemCapa?.trim()) return resolveApiUrl(a.urlImagemCapa.trim());
     if (signed) return resolveApiUrl(signed);
-    if (a.id && coverUrlByAlbumId[a.id]) return coverUrlByAlbumId[a.id];
+    // if (a.id && coverUrlByAlbumId[a.id]) return coverUrlByAlbumId[a.id];
     return null;
   }
 
   function itemTemplate(a: AlbumDTO) {
     const coverUrl = resolveCoverUrl(a);
-    if (a.id) ensureCoverUrl(a.id, a.urlImagemCapaAssinada ?? null);
+    // if (a.id) ensureCoverUrl(a.id, a.urlImagemCapaAssinada ?? null);
 
     return (
       <div className="p-2">
-        <Card title={a.titulo ?? 'Sem título'} subTitle={a.nomeArtista ?? ''}  style={{ width: 'min(320px, 100%)' }}>
+        {/* <Card title={a.titulo ?? 'Sem título'} subTitle={a.nomeArtista ?? ''}  style={{ width: 'min(320px, 100%)' }}> */}
+        <Card title={a.titulo ?? 'Sem título'} subTitle={a.nomeArtista ?? ''} style={{ width: '100%' }}>
           <div style={{ display: 'grid', gap: 12 }}>
             <div style={{ width: '100%', aspectRatio: '1 / 1', borderRadius: 8, overflow: 'hidden', background: '#f4f4f4', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               {coverUrl ? (
@@ -240,6 +241,7 @@ export default function AlbumListPage() {
     {error ? <Message severity="error" text={error} /> : null}
 
     <DataView
+      className="album-grid"
       value={artistId ? albums : pagedAlbums}
       layout="grid"
       itemTemplate={itemTemplate}
