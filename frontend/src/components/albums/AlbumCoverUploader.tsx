@@ -55,7 +55,6 @@ export default function AlbumCoverUploader(props: Props) {
     if (msg) {
       setError(msg);
 
-      // garante que dá pra selecionar o mesmo arquivo de novo
       if (fileInputRef.current) fileInputRef.current.value = '';
       setFile(null);
 
@@ -96,7 +95,6 @@ export default function AlbumCoverUploader(props: Props) {
         label={label}
         icon={icon}
         className="app-button-secondary"
-        style={{ alignSelf: 'flex-start' }}
         onClick={() => {
           setError(null);
           fileInputRef.current?.click();

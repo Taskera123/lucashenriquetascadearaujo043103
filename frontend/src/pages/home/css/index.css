@@ -1,0 +1,92 @@
+.catalog-card {
+  height: 100%;
+}
+
+.catalog-card .p-card-body {
+  height: 100%;
+  padding: 0;
+}
+.catalog-card-content {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.catalog-card-header {
+  padding: 0.75rem 0.75rem 0.5rem;
+  flex: 0 0 auto;
+}
+
+/* 2 linhas fixas + ellipsis (título) */
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* 1 linha + ellipsis */
+.ellipsis-1 {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Força altura mínima do título em 2 linhas, mesmo quando for curto */
+.title-2lines {
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 20px;
+  min-height: 40px; /* 2 linhas x 20px */
+}
+
+/* Subtítulo 1 linha */
+.subtitle-1line {
+  font-size: 12px;
+  opacity: 0.75;
+}
+
+/* Área visual fixa */
+.visual-square {
+  aspect-ratio: 1 / 1;
+  width: 90%;
+  border-radius: 10px;
+  overflow: hidden;
+  background: var(--surface-100);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: auto;
+  
+}
+
+
+
+.visual-square img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Área visual fixa (cartões sem imagem) */
+.visual-fixed {
+  width: 100%;
+  height: 160px;
+  border-radius: 10px;
+  background: var(--surface-100);
+  display: grid;
+  place-items: center;
+}
+
+/* Rodapé fixo */
+.catalog-card-footer {
+  flex: 0 0 auto;
+  margin-top: 0.5rem;
+  padding: 0 0.75rem 0.75rem;
+  font-size: 12px;
+  opacity: 0.75;
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

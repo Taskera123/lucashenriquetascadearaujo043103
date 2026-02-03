@@ -123,8 +123,8 @@ export default function BandFormDialog({ visible, mode, bandId, onHide, onSaved 
       header={title}
       visible={visible}
       onHide={onHide}
-      // style={{ width: 'min(900px, 95vw)' }}
-      className="app-dialog"
+      // className="app-dialog"
+      style={{ width: 'min(700px, 30vw)' }}
       modal
       footer={footer}
     >

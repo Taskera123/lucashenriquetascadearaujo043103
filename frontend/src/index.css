@@ -63,7 +63,7 @@ body {
   border-radius: 12px;
 }
 
-.album-grid .p-dataview-content .p-grid {
+/* .album-grid .p-dataview-content .p-grid {
   display: grid;
   grid-template-columns: repeat(5, minmax(1, 320px));
   gap: 16px;
@@ -79,7 +79,7 @@ body {
   .album-grid .p-dataview-content .p-grid {
     grid-template-columns: 1fr;
   }
-}
+} */
 
 h1 {
   font-size: 3.2em;
@@ -162,4 +162,83 @@ button:not(.p-button):focus-visible {
 .app-button-secondary.p-button.p-button-text:enabled:hover,
 .app-button-secondary.p-button.p-button-icon-only:enabled:hover {
   background: color-mix(in srgb, var(--surface-300), transparent 60%);
+}
+
+.album-card {
+  height: 100%;
+}
+
+.album-card .p-card-body {
+  padding: 0;
+  height: 100%;
+}
+
+/* Layout interno */
+.album-card-content {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+/* HEADER FIXO */
+.album-card-header {
+  padding: 0.75rem 0.75rem 0.5rem;
+  min-height: 72px;
+}
+
+/* TÍTULO */
+.album-title {
+  font-weight: 600;
+  font-size: 1rem;
+  line-height: 1.25rem;
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* SUBTÍTULO */
+.album-subtitle {
+  font-size: 0.85rem;
+  opacity: 0.75;
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* IMAGEM SEMPRE QUADRADA */
+.album-cover {
+  aspect-ratio: 1 / 1;
+  width: 100%;
+  overflow: hidden;
+  background: #1f2937;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.album-cover img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* PLACEHOLDER */
+.album-cover-placeholder {
+  text-align: center;
+  opacity: 0.6;
+}
+
+.album-cover-placeholder i {
+  font-size: 2rem;
+}
+
+/* FOOTER FIXO */
+.album-card-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.25rem;
+  padding: 0.5rem 0.75rem;
 }

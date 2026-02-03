@@ -31,8 +31,9 @@ export default function SideNav({ collapsed, onToggle }: Props) {
       display: 'flex', flexDirection: 'column', gap: 12, position: 'sticky', top: 0, height: '100vh', background: 'var(--surface-0)' }}>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, overflow: 'hidden' }}>
-          { !collapsed && <i className="pi pi-box" style={{ fontSize: 18 }} />}
-          {!collapsed && <div style={{ whiteSpace: 'nowrap', fontWeight: 700 }}>Artista/Album</div>}
+          { !collapsed && <i className="pi folder-open" style={{ fontSize: 18 }} />}
+          {!collapsed && <div style={{ whiteSpace: 'nowrap', fontWeight: 700 }}>Artista/Album/Banda</div>}
+           { collapsed && <i className="pi folder" style={{ fontSize: 18 }} />}
         </div>
         <Button icon={collapsed ? 'pi pi-angle-right' : 'pi pi-angle-left'} rounded text aria-label="Recolher menu" onClick={onToggle} />
       </div>

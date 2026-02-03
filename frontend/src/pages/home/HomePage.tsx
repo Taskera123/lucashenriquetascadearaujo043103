@@ -74,7 +74,6 @@ export default function HomePage() {
   }, [bandas]);
 
   function resolveAlbumCover(album: AlbumDTO) {
-    // return album.urlImagemCapaAssinada?.trim() || album.urlImagemCapa?.trim() || '';
     const url = album.urlImagemCapaAssinada?.trim() || album.urlImagemCapa?.trim() || '';
     return resolveApiUrl(url);
   }
@@ -99,7 +98,12 @@ export default function HomePage() {
     return (
       <Card style={{ height: '100%', width: '100%', background: cardBg, color: textPrimary }}>
         <div style={{ display: 'grid', gap: 10, height: '100%', alignContent: 'start' }}>
-          <div style={{ fontWeight: 700, fontSize: 16, ...clampTitleStyle }}>{album.titulo ?? 'Sem título'}</div>
+          <div  style={{ fontWeight: 700, fontSize: 25, lineHeight: '20px', minHeight: 40, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', textOverflow: 'ellipsis',  }}
+            data-pr-tooltip={album.titulo ?? 'Sem título'}
+             data-pr-position="top"
+            >
+           {album.titulo ?? 'Sem título'}
+          </div>
           <div style={{ fontSize: 12, color: textSecondary }}>{album.nomeArtista ?? ''}</div>
           <div
             style={{
@@ -251,19 +255,6 @@ export default function HomePage() {
             <div style={{ opacity: 0.7 }}>Nenhum album cadastrado ainda.</div>
           )}
 
-          {/* {loading && !albuns.length ? (
-            <div style={{ opacity: 0.7 }}>Carregando álbuns...</div>
-          ) : albumPreview.length ? (
-            <div style={{ display: 'grid', gap: 16, gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))' }}>
-              {albumPreview.map((album) => (
-                <div key={album.id ?? album.titulo} className="p-1" style={{ minHeight: 360 }}>
-                  {renderAlbumCard(album)}
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div style={{ opacity: 0.7 }}>Nenhum álbum cadastrado ainda.</div>
-          )} */}
         </section>
 
         <section style={{ display: 'grid', gap: 16, background: sectionBg, padding: 16 }}>

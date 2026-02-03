@@ -159,7 +159,8 @@ export default function AlbumDetailDialog({ visible, albumId, onHide }: Props) {
       header="Detalhe do Álbum"
       visible={visible}
       onHide={onHide}
-      className="app-dialog"
+      style={{ width: 'min(900px, 50vw)' }}
+      // className="app-dialog"
       modal
     >
       {error ? <Message severity="error" text={error} /> : null}

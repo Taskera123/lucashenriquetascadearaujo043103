@@ -12,6 +12,8 @@ import type { AlbumDTO, BandaResponseDTO } from '../../types/api';
 import AlbumFormDialog from '../../components/albums/AlbumFormDialog';
 import resolveApiUrl from '../../utils/resolveApiUrl';
 
+import './css/index.css';
+
 
 export default function AlbumListPage() {
   const nav = useNavigate();
@@ -138,34 +140,63 @@ export default function AlbumListPage() {
   }
 
   function itemTemplate(a: AlbumDTO) {
-    const coverUrl = resolveCoverUrl(a);
-    // if (a.id) ensureCoverUrl(a.id, a.urlImagemCapaAssinada ?? null);
+  const coverUrl = resolveCoverUrl(a);
 
-    return (
-      <div className="p-2">
-        {/* <Card title={a.titulo ?? 'Sem título'} subTitle={a.nomeArtista ?? ''}  style={{ width: 'min(320px, 100%)' }}> */}
-        <Card title={a.titulo ?? 'Sem título'} subTitle={a.nomeArtista ?? ''} style={{ width: '100%' }}>
-          <div style={{ display: 'grid', gap: 12 }}>
-            <div style={{ width: '100%', aspectRatio: '1 / 1', borderRadius: 8, overflow: 'hidden', background: '#f4f4f4', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              {coverUrl ? (
-                <img src={coverUrl} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-              ) : (
-                <div style={{ opacity: 0.7, textAlign: 'center' }}>
-                  <i className="pi pi-image" style={{ fontSize: 28 }} />
-                  <div style={{ fontSize: 12, marginTop: 8 }}>Sem capa</div>
-                </div>
-              )}
-            </div>
-
-            <div className="flex gap-2" style={{ justifyContent: 'flex-end' }}>
-              <Button icon="pi pi-eye" text className="app-button-primary" onClick={() => a.id && nav(`/admin/albums/${a.id}`)} />
-              <Button icon="pi pi-pencil" text className="app-button-secondary" onClick={() => a.id && openEdit(a.id)} />
-            </div>
-          </div>
-        </Card>
+  return (
+  <div className="col-12 sm:col-6 lg:col-4 xl:col-3 p-2">
+      <Card className="album-card">
+  <div className="album-card-content">
+    {/* HEADER */}
+    <div className="album-card-header">
+      <div
+        className="album-title"
+        data-pr-tooltip={a.titulo}
+        data-pr-position="top"
+      >
+        {a.titulo ?? 'Sem título'}
       </div>
-    );
-  }
+
+      <div
+        className="album-subtitle"
+        data-pr-tooltip={a.nomeArtista}
+        data-pr-position="top"
+      >
+        {a.nomeArtista ?? ''}
+      </div>
+    </div>
+
+    {/* IMAGEM */}
+    <div className="album-cover">
+      {coverUrl ? (
+        <img src={coverUrl} alt={a.titulo ?? ''} />
+      ) : (
+        <div className="album-cover-placeholder">
+          <i className="pi pi-image" />
+          <span>Sem capa</span>
+        </div>
+      )}
+    </div>
+
+    {/* AÇÕES */}
+    <div className="album-card-actions">
+      <Button
+        icon="pi pi-eye"
+        text
+        className="app-button-primary"
+        onClick={() => a.id && nav(`/admin/albums/${a.id}`)}
+      />
+      <Button
+        icon="pi pi-pencil"
+        text
+        className="app-button-secondary"
+        onClick={() => a.id && openEdit(a.id)}
+      />
+    </div>
+  </div>
+</Card>
+    </div>
+  );
+}
 
   function openCreate() {
     setDialogMode('create');
@@ -241,7 +272,7 @@ export default function AlbumListPage() {
     {error ? <Message severity="error" text={error} /> : null}
 
     <DataView
-      className="album-grid"
+      // className="album-grid"
       value={artistId ? albums : pagedAlbums}
       layout="grid"
       itemTemplate={itemTemplate}
