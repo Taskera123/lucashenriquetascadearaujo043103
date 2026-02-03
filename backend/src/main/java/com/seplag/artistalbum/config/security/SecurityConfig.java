@@ -44,6 +44,8 @@ public class SecurityConfig {
                         .requestMatchers("/actuator/**").permitAll()
                         .requestMatchers("/ws/**").permitAll()
 //                        .requestMatchers("/v1/**").permitAll()
+                        .requestMatchers("/v1/catalogo/**").permitAll()
+                        .requestMatchers("/v1/artistas/*/foto").permitAll()
                         .requestMatchers("/").permitAll()
                         .anyRequest().authenticated()
 

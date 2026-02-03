@@ -43,7 +43,8 @@ public class WebSocketAuthConfig implements org.springframework.web.socket.confi
                     String authHeader = accessor.getFirstNativeHeader("Authorization");
 
                     if (authHeader == null || authHeader.isBlank()) {
-                        throw new IllegalArgumentException("Authorization header ausente no CONNECT");
+//                        throw new IllegalArgumentException("Authorization header ausente no CONNECT");
+                        return message;
                     }
 
                     if (!authHeader.startsWith("Bearer ")) {

@@ -111,7 +111,6 @@ public class MinioService {
 
     public String generatePresignedUrl30Min(String objectKey) throws Exception {
         return minioClientPublic.getPresignedObjectUrl(
-//          return minioClient.getPresignedObjectUrl(
                 GetPresignedObjectUrlArgs.builder()
                         .method(Method.GET)
                         .bucket(bucketName)
