@@ -28,6 +28,7 @@ export default function TopBar({ sidebarWidth, username }: { sidebarWidth: numbe
         <div style={{ fontWeight: 700 }}>{isSmall ? 'Painel' : welcome}</div>
         {isSmall ? (
           <div style={{ display: 'flex', gap: 8 }}>
+            <Button icon="pi pi-home" text aria-label="Home" onClick={() => nav('/home')} />
             <Button icon="pi pi-users" text aria-label="Artistas" onClick={() => nav('/admin/artistas')} />
             <Button icon="pi pi-images" text aria-label="Álbuns" onClick={() => nav('/admin/albums')} />
             <Button icon="pi pi-sitemap" text aria-label="Bandas" onClick={() => nav('/admin/bandas')} />

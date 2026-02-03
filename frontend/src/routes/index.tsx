@@ -1,4 +1,4 @@
-import { createBrowserRouter } from 'react-router-dom';
+import { createBrowserRouter, Navigate } from 'react-router-dom';
 import React, { Suspense } from 'react';
 import MainLayout from '../components/layout/MainLayout';
 import { ProtectedRoute } from './ProtectedRoute';
@@ -23,7 +23,8 @@ function lazy(el: React.ReactNode) {
 }
 
 export const router = createBrowserRouter([
-  { path: '/', element: lazy(<HomePage />) },
+  { path: '/', element: <Navigate to="/home" replace /> },
+  { path: '/home', element: lazy(<HomePage />) },
   { path: '/login', element: lazy(<LoginPage />) },
   {
     path: '/admin',

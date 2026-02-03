@@ -17,7 +17,6 @@
   flex: 0 0 auto;
 }
 
-/* 2 linhas fixas + ellipsis (título) */
 .line-clamp-2 {
   display: -webkit-box;
   -webkit-line-clamp: 2;
@@ -25,28 +24,24 @@
   overflow: hidden;
 }
 
-/* 1 linha + ellipsis */
 .ellipsis-1 {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-/* Força altura mínima do título em 2 linhas, mesmo quando for curto */
 .title-2lines {
   font-weight: 700;
   font-size: 16px;
   line-height: 20px;
-  min-height: 40px; /* 2 linhas x 20px */
+  min-height: 40px; 
 }
 
-/* Subtítulo 1 linha */
 .subtitle-1line {
   font-size: 12px;
   opacity: 0.75;
 }
 
-/* Área visual fixa */
 .visual-square {
   aspect-ratio: 1 / 1;
   width: 90%;
@@ -60,15 +55,12 @@
   
 }
 
-
-
 .visual-square img {
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
 
-/* Área visual fixa (cartões sem imagem) */
 .visual-fixed {
   width: 100%;
   height: 160px;
@@ -78,7 +70,6 @@
   place-items: center;
 }
 
-/* Rodapé fixo */
 .catalog-card-footer {
   flex: 0 0 auto;
   margin-top: 0.5rem;
@@ -89,4 +80,23 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.carousel-reverse .p-carousel-items-content {
+  transform: scaleX(-1);
+}
+
+.carousel-reverse .p-carousel-item {
+  transform: scaleX(-1);
+}
+
+.carousel-reverse .p-carousel-prev,
+.carousel-reverse .p-carousel-next {
+  transform: scaleX(-1);
+}
+
+.carousel-item-wrap { height: 360px; }
+
+@media (max-width: 900px){
+  .carousel-item-wrap { height: auto; } 
 }

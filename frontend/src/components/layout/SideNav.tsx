@@ -9,6 +9,7 @@ type Props = { collapsed: boolean; onToggle: () => void; };
 type Item = { to: string; label: string; icon: string; enabled?: boolean; };
 
 const items: Item[] = [
+  { to: '/home', label: 'Home', icon: 'pi pi-home' },
   { to: '/admin/artistas', label: 'Artistas', icon: 'pi pi-users' },
   { to: '/admin/albums', label: 'Álbuns', icon: 'pi pi-images' },
   { to: '/admin/bandas', label: 'Bandas', icon: 'pi pi-sitemap' },

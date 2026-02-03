@@ -7,9 +7,9 @@ const KEY = 'ui.theme';
 function load(): ThemeMode {
   try {
     const stored = localStorage.getItem(KEY);
-    return stored === 'dark' ? 'dark' : 'light';
+    return stored === 'light' ? 'light' : 'dark';
   } catch {
-    return 'light';
+    return 'dark';
   }
 }
 

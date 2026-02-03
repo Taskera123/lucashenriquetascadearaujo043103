@@ -10,6 +10,7 @@ import { theme$, toggleTheme } from '../../state/theme.store';
 import { updates$ } from '../../state/wsUpdates.store';
 import resolveApiUrl from '../../utils/resolveApiUrl';
 
+import './css/index.css';
 
 export default function HomePage() {
   const nav = useNavigate();
@@ -191,7 +192,7 @@ export default function HomePage() {
   const carouselCardHeight = 360;
 
   const responsiveCarouselOptions = [
-    { breakpoint: '1200px', numVisible: 3, numScroll: 3 , gap:"10px"},
+    { breakpoint: '1200px', numVisible: 4, numScroll: 4 , gap:"10px"},
     { breakpoint: '900px', numVisible: 2, numScroll: 2, gap:"10px" },
     { breakpoint: '600px', numVisible: 1, numScroll: 1, gap:"10px" }
   ];
@@ -238,12 +239,12 @@ export default function HomePage() {
               numVisible={4}
               numScroll={4}
               itemTemplate={(album: AlbumDTO) => (
-                <div className="p-2" style={{ height: carouselCardHeight, width: '100%', padding: '0 10px'}}>
+                <div className="p-2 carousel-item-wrap" style={{ width: '100%', padding: '0 10px' }}>
                   {renderAlbumCard(album)}
                 </div>
               )}
               circular={albumCarouselItems.length > 4}
-              autoplayInterval={albumCarouselItems.length > 4 ? 5000 : 2000}
+              autoplayInterval={albumCarouselItems.length > 4 ? 5000 : 3000}
               showIndicators={albumCarouselItems.length > 4}
               showNavigators={albumCarouselItems.length > 4}
               style={{ width: '100%', maxWidth: 1100, margin: '0 auto' }}
@@ -265,6 +266,7 @@ export default function HomePage() {
 
           {artistPreview.length ? (
             <Carousel
+              className="carousel-reverse"
               value={artistPreview}
               numVisible={4}
               numScroll={4}
@@ -274,11 +276,13 @@ export default function HomePage() {
                 </div>
               )}
               circular={artistPreview.length > 4}
-              autoplayInterval={artistPreview.length > 4 ? 5000 : 2000}
+              autoplayInterval={artistPreview.length > 4 ? 5000 : 3000}
               showIndicators={artistPreview.length > 4}
               showNavigators={artistPreview.length > 4}
               style={{ width: '100%', maxWidth: 1100, margin: '0 auto' }}
               responsiveOptions={responsiveCarouselOptions}
+              prevIcon="pi pi-angle-right"
+              nextIcon="pi pi-angle-left"
             />
           ) : loading ? (
             <div style={{ opacity: 0.7 }}>Carregando artistas...</div>
@@ -287,7 +291,7 @@ export default function HomePage() {
           )}
         </section>
 
-        <section style={{ display: 'grid', gap: 16, background: sectionBg, padding: 16 }}>
+           <section style={{ display: 'grid', gap: 16, background: sectionBg, padding: 16 }}>
           <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', flexWrap: 'wrap', gap: 8 }}>
             <h2 style={{ margin: 0 }}>Bandas</h2>
             <span style={{ color: textSecondary }}>Total: {bandas.length}</span>
@@ -304,7 +308,7 @@ export default function HomePage() {
                 </div>
               )}
               circular={bandPreview.length > 4}
-              autoplayInterval={bandPreview.length > 4 ? 5000 : 2000}
+              autoplayInterval={bandPreview.length > 4 ? 5000 : 3000}
               showIndicators={bandPreview.length > 4}
               showNavigators={bandPreview.length > 4}
               style={{ width: '100%', maxWidth: 1100, margin: '0 auto' }}
