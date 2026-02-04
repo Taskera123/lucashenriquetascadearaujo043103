@@ -246,7 +246,7 @@ export default function AlbumFormDialog({ visible, mode, artistId, albumId, onHi
       visible={visible}
       onHide={onHide}
       // className="app-dialog"
-      style={{ width: 'min(700px, 30vw)' }}
+      style={{ width: 'min(700px, 60vw)' }}
       modal
       footer={footer}
     >

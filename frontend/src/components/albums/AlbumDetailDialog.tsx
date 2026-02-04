@@ -195,10 +195,8 @@ export default function AlbumDetailDialog({ visible, albumId, onHide }: Props) {
                 showNavigators={carouselItems.length > 1}
               />
             ) : (
-              // <div style={{ width: '100%', aspectRatio: '1 / 1', borderRadius: 8, overflow: 'hidden', background: '#f4f4f4', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <div style={{ width: '100%', aspectRatio: '1 / 1', borderRadius: 8, overflow: 'hidden', background: '#f4f4f4', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>  
               {coverUrl ? (
-                  // <img src={coverUrl} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                   <img
                     src={coverFallbackActive && id ? `/v1/albums/capa/${id}` : coverUrl}
                     style={{ width: '100%', height: '100%', objectFit: 'cover' }}
@@ -216,27 +214,20 @@ export default function AlbumDetailDialog({ visible, albumId, onHide }: Props) {
             )}
           </div>
 
-           {/* <div style={{ display: 'grid', gap: 8 }}>
-            <div style={{ fontWeight: 600 }}>URL da imagem</div>
-            <div className="flex gap-2" style={{ flexWrap: 'wrap' }}>
-              <Button
-                label="Ver URL da imagem"
-                icon="pi pi-link"
-                className="app-button-secondary"
-                onClick={() => setVisibleCoverUrl(coverUrl)}
-                disabled={!coverUrl}
-              />
-              <Button
-                label="Limpar"
-                icon="pi pi-times"
-                className="app-button-secondary"
-                onClick={() => setVisibleCoverUrl(null)}
-                disabled={!visibleCoverUrl}
-              />
+          {visibleCoverUrl ? (
+            <div style={{ display: 'grid', gap: 8 }}>
+              <div style={{ fontWeight: 600 }}>URL da imagem</div>
+              <div className="flex gap-2" style={{ flexWrap: 'wrap' }}>
+                <Button
+                  label="Fechar"
+                  icon="pi pi-times"
+                  className="app-button-secondary"
+                  onClick={() => setVisibleCoverUrl(null)}
+                />
+              </div>
+              <InputText className="w-full" value={visibleCoverUrl} readOnly />
             </div>
-            {visibleCoverUrl ? <InputText className="w-full" value={visibleCoverUrl} readOnly /> : null}
-            {!coverUrl ? <small style={{ opacity: 0.7 }}>Sem URL disponível para a capa principal.</small> : null}
-          </div> */}
+          ) : null}
 
           <div className="flex gap-2" style={{ justifyContent: 'flex-end', flexWrap: 'wrap' }}>
             <Button label="Editar" icon="pi pi-pencil" className="app-button-secondary" onClick={() => setEditVisible(true)} />
