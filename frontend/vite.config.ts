@@ -6,6 +6,13 @@ import { NodeGlobalsPolyfillPlugin } from '@esbuild-plugins/node-globals-polyfil
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react()],
+  build: {
+    rollupOptions: {
+      output: {
+        inlineDynamicImports: true
+      }
+    }
+  },
   optimizeDeps: {
     esbuildOptions: {
       define: {

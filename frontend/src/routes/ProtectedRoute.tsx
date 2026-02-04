@@ -8,6 +8,6 @@ export function ProtectedRoute({ children }: { children: React.ReactNode }) {
     const sub = auth$.subscribe((s) => setOk(isAuthenticated(s)));
     return () => sub.unsubscribe();
   }, []);
-  if (!ok) return <Navigate to="/login" replace />;
+  if (!ok) return <Navigate to="/home" replace />;
   return <>{children}</>;
 }

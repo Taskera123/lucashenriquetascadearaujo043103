@@ -3,7 +3,7 @@ import React, { Suspense } from 'react';
 import MainLayout from '../components/layout/MainLayout';
 import { ProtectedRoute } from './ProtectedRoute';
 
-const LoginPage = React.lazy(() => import('../pages/auth/LoginPage'));
+import LoginPage from '../pages/auth/LoginPage';
 const HomePage = React.lazy(() => import('../pages/home/HomePage'));
 const ArtistListPage = React.lazy(() => import('../pages/artistas/ArtistaListPage'));
 const ArtistDetailPage = React.lazy(() => import('../pages/artistas/ArtistaDetailPage'));
@@ -25,7 +25,7 @@ function lazy(el: React.ReactNode) {
 export const router = createBrowserRouter([
   { path: '/', element: <Navigate to="/home" replace /> },
   { path: '/home', element: lazy(<HomePage />) },
-  { path: '/login', element: lazy(<LoginPage />) },
+  { path: '/login', element: <LoginPage /> },
   {
     path: '/admin',
     element: lazy(

@@ -31,9 +31,18 @@ export default function AlbumDetailDialog({ visible, albumId, onHide }: Props) {
   const [coverFallbackActive, setCoverFallbackActive] = useState(false);
   const [carouselFallbacks, setCarouselFallbacks] = useState<Record<number, boolean>>({});
   const extraInputRef = useRef<HTMLInputElement | null>(null);
+  const inFlightRef = useRef<{ id: number | null; promise: Promise<void> | null }>({ id: null, promise: null });
+
 
   async function load() {
     if (!id) return;
+    const inFlight = inFlightRef.current;
+    if (inFlight.promise && inFlight.id === id) {
+      await inFlight.promise;
+      return;
+    }
+
+    const task = (async () => {
     setLoading(true);
     setError(null);
     try {
@@ -59,6 +68,14 @@ export default function AlbumDetailDialog({ visible, albumId, onHide }: Props) {
     } finally {
       setLoading(false);
     }
+  })();
+
+    inFlightRef.current = { id, promise: task };
+    await task;
+    if (inFlightRef.current.promise === task) {
+      inFlightRef.current = { id, promise: null };
+    }
+
   }
 
   useEffect(() => {
