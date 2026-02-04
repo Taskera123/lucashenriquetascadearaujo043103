@@ -3,7 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { Button } from 'primereact/button';
 import { Card } from 'primereact/card';
 import { ArtistService } from '../../services/ArtistaService';
-import { AlbumService } from '../../services/AlbumService';
+import { AlbumFacade } from '../../facades/AlbumFacade';
 import { updates$ } from '../../state/wsUpdates.store';
 import type { AlbumDTO, ArtistaResponseDTO } from '../../types/api';
 import AlbumCoverUploader from '../../components/albums/AlbumCoverUploader';
@@ -32,14 +32,23 @@ export default function ArtistDetailPage() {
   const [dialogVisible, setDialogVisible] = useState(false);
   const [albumDialogVisible, setAlbumDialogVisible] = useState(false);
 
-  const load = useCallback(async () => {
+  const load = useCallback(async (force = false) => {
     setLoading(true);
     setError(null);
     try {
-      const { data: a } = await ArtistService.obterPorId(artistId);
-      setArtist(a);
-      const { data: page } = await AlbumService.listarPorArtistaPaginado(artistId, { pagina: 0, tamanho: 50 });
-      setAlbums(page.content ?? []);
+      const catalog = await AlbumFacade.loadCatalog({ force });
+      const artistFromCatalog = (catalog.artists ?? []).find((item) => item.idArtista === artistId) ?? null;
+      if (artistFromCatalog) {
+        setArtist(artistFromCatalog);
+      } else {
+        const { data: a } = await ArtistService.obterPorId(artistId);
+        setArtist(a);
+      }
+      const artistAlbums = (catalog.albums ?? []).filter((album) => album.idArtista === artistId);
+      setAlbums(artistAlbums);
+      if (catalog.error) {
+        setError(catalog.error);
+      }
     } catch (e: any) {
       setError(e?.message ?? 'Erro ao carregar');
     } finally {
@@ -54,10 +63,10 @@ export default function ArtistDetailPage() {
   useEffect(() => {
     const sub = updates$.subscribe((event) => {
       if (event.entity === 'artista' && (!event.id || event.id === artistId)) {
-        load();
+        load(true);
       }
       if (event.entity === 'album') {
-        load();
+        load(true);
       }
     });
     return () => sub.unsubscribe();

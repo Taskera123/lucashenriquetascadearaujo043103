@@ -4,7 +4,8 @@ import { Card } from 'primereact/card';
 import { Carousel } from 'primereact/carousel';
 import { Message } from 'primereact/message';
 import { useNavigate } from 'react-router-dom';
-import { CatalogoService } from '../../services/CatalogoService';
+// import { CatalogoService } from '../../services/CatalogoService';
+import { AlbumFacade } from '../../facades/AlbumFacade';
 import type { AlbumDTO, ArtistaResponseDTO, BandaResponseDTO, CatalogoResponseDTO } from '../../types/api';
 import { theme$, toggleTheme } from '../../state/theme.store';
 import { updates$ } from '../../state/wsUpdates.store';
@@ -19,12 +20,15 @@ export default function HomePage() {
   const [error, setError] = useState<string | null>(null);
   const [theme, setTheme] = useState(theme$.value);
 
-  const loadCatalogo = useCallback(async () => {
+  const loadCatalogo = useCallback(async (force = false) => {
     setLoading(true);
     setError(null);
     try {
-      const { data } = await CatalogoService.obterCatalogo();
-      setCatalogo(data);
+       const state = await AlbumFacade.loadCatalog({ force });
+      setCatalogo({ albuns: state.albums, artistas: state.artists, bandas: state.bands });
+      if (state.error) {
+        setError(state.error);
+      }
     } catch (err: any) {
       setError(err?.message ?? 'Erro ao carregar catálogo');
     } finally {
@@ -48,7 +52,7 @@ export default function HomePage() {
         || (event.entity === 'artista' && event.action === 'created')
         || (event.entity === 'banda' && event.action === 'created')
       ) {
-        loadCatalogo();
+        loadCatalogo(true);
       }                                                       
     });
     return () => sub.unsubscribe();

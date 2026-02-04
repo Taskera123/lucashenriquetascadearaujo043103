@@ -5,8 +5,7 @@ import { DataView } from 'primereact/dataview';
 import { Message } from 'primereact/message';
 import { Card } from 'primereact/card';
 import { Dropdown } from 'primereact/dropdown';
-import { AlbumService } from '../../services/AlbumService';
-import { BandaService } from '../../services/BandaService';
+import { AlbumFacade } from '../../facades/AlbumFacade';
 import { updates$ } from '../../state/wsUpdates.store';
 import type { AlbumDTO, BandaResponseDTO } from '../../types/api';
 import AlbumFormDialog from '../../components/albums/AlbumFormDialog';
@@ -23,7 +22,6 @@ export default function AlbumListPage() {
   const [albums, setAlbums] = useState<AlbumDTO[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  // const [coverUrlByAlbumId, setCoverUrlByAlbumId] = useState<Record<number, string>>({});
   const [bands, setBands] = useState<BandaResponseDTO[]>([]);
   const [selectedBandId, setSelectedBandId] = useState<number | null>(null);
   const [selectedArtistId, setSelectedArtistId] = useState<number | null>(null);
@@ -34,21 +32,20 @@ export default function AlbumListPage() {
   const [dialogMode, setDialogMode] = useState<'create' | 'edit'>('create');
   const [selectedAlbumId, setSelectedAlbumId] = useState<number | null>(null);
 
-  const loadAlbums = useCallback(async () => {
+  const loadAlbums = useCallback(async (force = false) => {
     setLoading(true);
     setError(null);
 
     try {
-      if (!artistId) {
-        const { data } = await AlbumService.listarTodosPaginado({ pagina: 0, tamanho: 500, ordenacao: 'asc' });
-        setAlbums(data.content ?? []);
-        const { data: bandList } = await BandaService.listarTodos();
-        setBands(bandList ?? []);
-        return;
+      const state = await AlbumFacade.loadCatalog({ force });
+      const nextAlbums = artistId
+        ? (state.albums ?? []).filter((album) => album.idArtista === artistId)
+        : (state.albums ?? []);
+      setAlbums(nextAlbums);
+      setBands(state.bands ?? []);
+      if (state.error) {
+        setError(state.error);
       }
-
-      const { data } = await AlbumService.listarPorArtistaPaginado(artistId, { pagina: 0, tamanho: 50 });
-      setAlbums(data.content ?? []);
     } catch (e: any) {
       setError(e?.message ?? 'Erro ao carregar álbuns');
     } finally {
@@ -63,7 +60,7 @@ export default function AlbumListPage() {
   useEffect(() => {
     const sub = updates$.subscribe((event) => {
       if (event.entity === 'album' || event.entity === 'banda') {
-        loadAlbums();
+        loadAlbums(true);
       }
     });
     return () => sub.unsubscribe();
@@ -74,18 +71,12 @@ export default function AlbumListPage() {
       setBandArtistIds([]);
       return;
     }
-    (async () => {
-      try {
-        const { data } = await BandaService.obterPorId(selectedBandId);
-        const ids = (data.artistas ?? [])
-          .map((a) => a.idArtista)
-          .filter((id): id is number => typeof id === 'number');
-        setBandArtistIds(ids);
-      } catch {
-        setBandArtistIds([]);
-      }
-    })();
-  }, [selectedBandId]);
+    const band = bands.find((item) => item.idBanda === selectedBandId);
+    const ids = (band?.artistas ?? [])
+      .map((a) => a.idArtista)
+      .filter((id): id is number => typeof id === 'number');
+    setBandArtistIds(ids);
+  }, [selectedBandId, bands]);
 
   const artistOptions = useMemo(() => {
     const map = new Map<number, string>();
@@ -118,24 +109,11 @@ export default function AlbumListPage() {
     return filteredAlbums.slice(start, start + rows);
   }, [filteredAlbums, page, rows]);
 
-  // async function ensureCoverUrl(albumId?: number, signed?: string | null) {
-  //   if (!albumId) return;
-  //   // if (signed && signed.trim()) return;
-  //   if (signed && signed.trim().startsWith('http')) return;
-  //   if (coverUrlByAlbumId[albumId]) return;
-  //   try {
-  //     const { data } = await AlbumService.obterUrlCapa(albumId);
-  //     if (typeof data === 'string' && data.trim()) setCoverUrlByAlbumId((p) => ({ ...p, [albumId]: data }));
-  //   } catch {}
-  // }
-
   function resolveCoverUrl(a: AlbumDTO) {
-    // if (a.urlImagemCapaAssinada?.trim()) return a.urlImagemCapaAssinada;
     const signed = a.urlImagemCapaAssinada?.trim();
     if (signed && signed.startsWith('http')) return signed;
     if (a.urlImagemCapa?.trim()) return resolveApiUrl(a.urlImagemCapa.trim());
     if (signed) return resolveApiUrl(signed);
-    // if (a.id && coverUrlByAlbumId[a.id]) return coverUrlByAlbumId[a.id];
     return null;
   }
 
@@ -146,7 +124,6 @@ export default function AlbumListPage() {
   <div className="col-12 sm:col-6 lg:col-4 xl:col-3 p-2">
       <Card className="album-card">
   <div className="album-card-content">
-    {/* HEADER */}
     <div className="album-card-header">
       <div
         className="album-title"
@@ -165,7 +142,6 @@ export default function AlbumListPage() {
       </div>
     </div>
 
-    {/* IMAGEM */}
     <div className="album-cover">
       {coverUrl ? (
         <img src={coverUrl} alt={a.titulo ?? ''} />
@@ -177,7 +153,6 @@ export default function AlbumListPage() {
       )}
     </div>
 
-    {/* AÇÕES */}
     <div className="album-card-actions">
       <Button
         icon="pi pi-eye"
@@ -301,7 +276,7 @@ export default function AlbumListPage() {
       albumId={selectedAlbumId}
       onHide={() => setDialogVisible(false)}
       onSaved={async () => {
-        await loadAlbums();
+        await loadAlbums(true);
       }}
     />
   </div>

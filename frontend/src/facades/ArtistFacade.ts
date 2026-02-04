@@ -1,5 +1,6 @@
 import { BehaviorSubject } from 'rxjs';
 import { ArtistService } from '../services/ArtistaService';
+import { AlbumFacade } from './AlbumFacade';
 import type { ArtistaDTO, SortDir } from '../types/api';
 
 type State = {
@@ -23,9 +24,8 @@ export const ArtistFacade = {
   },
   setPage(page: number, size: number) { artistList$.next({ ...artistList$.value, page, size }); },
   async getAllAlbums() {
-    const { data } = await ArtistService.listarTodos({ pagina: 0, tamanho: 500, ordenacao: 'asc' });
-    const albums = (data.content ?? []).flatMap((artist) => artist.albuns ?? []);
-    return { data: albums };
+    const catalog = await AlbumFacade.loadCatalog();
+    return { data: catalog.albums ?? [] };
   },
   async search() {
   const s = artistList$.value;
@@ -35,21 +35,21 @@ export const ArtistFacade = {
 
   try {
     if (!nome) {
-      const { data } = await ArtistService.listarTodos({
-        pagina: s.page,
-        tamanho: s.size,
-        ordenacao: s.sortDir
-      });
-
-      const content = normalizeArtists(data.content ?? []);
-
-      artistList$.next({
-        ...artistList$.value,
-        loading: false,
-        content,
-        total: data.totalElements ?? 0
-      });
-      return;
+       const catalog = await AlbumFacade.loadCatalog();
+      if (catalog.artists.length) {
+        const normalized = normalizeArtists(catalog.artists as ArtistaDTO[]);
+        const sorted = sort(normalized, s.sortDir);
+        const start = s.page * s.size;
+        const content = sorted.slice(start, start + s.size);
+        artistList$.next({
+          ...artistList$.value,
+          loading: false,
+          content,
+          total: sorted.length,
+          error: catalog.error
+        });
+        return;
+      }
     }
 
     if (nome.length < 2) {
