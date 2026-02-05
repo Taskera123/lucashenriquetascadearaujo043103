@@ -381,13 +381,13 @@ export default function AlbumFormDialog({ visible, mode, artistId, albumId, onHi
                     onClick={handleExtraPicker}
                     disabled={uploadingExtras}
                   />
-                  <Button
+                  {/* <Button
                     label={uploadingExtras ? 'Enviando...' : 'Adicionar capas'}
                     icon="pi pi-upload"
                     className="app-button-primary"
                     onClick={handleExtraUpload}
                     disabled={!extraFiles.length || uploadingExtras}
-                  />
+                  /> */}
                 </div>
                 {extraPreviewUrls.length ? (
                   <div style={{ display: 'grid', gap: 8, gridTemplateColumns: 'repeat(auto-fill, minmax(80px, 1fr))' }}>
@@ -406,12 +406,23 @@ export default function AlbumFormDialog({ visible, mode, artistId, albumId, onHi
                         <img src={url} alt={`Prévia ${index + 1}`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                       </div>
                     ))}
-                  </div>
+                    <div className="flex" style={{ flexWrap: 'wrap', gap: 12 }}>
+                  </div>             
+                </div>
                 ) : null}
                 {extraFiles.length ? (
+                   <div className="flex" style={{ flexWrap: 'wrap', gap: 12 }}>
+                  <Button
+                    label={uploadingExtras ? 'Enviando...' : 'Adicionar capas'}
+                    icon="pi pi-upload"
+                    className="app-button-primary"
+                    onClick={handleExtraUpload}
+                    disabled={!extraFiles.length || uploadingExtras}
+                  />
                   <small style={{ opacity: 0.7 }}>
                     {extraFiles.length} arquivo(s) selecionado(s). A primeira capa permanece como principal.
                   </small>
+                </div>         
                 ) : null}
                 {extraError ? <small style={{ color: '#d32f2f' }}>{extraError}</small> : null}
               </div>
