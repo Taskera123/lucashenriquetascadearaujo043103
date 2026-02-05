@@ -4,12 +4,16 @@ Projeto prático para o processo seletivo da SEPLAG/MT 2026, com backend em Spri
 
 ## Dados de inscrição
 
-Nome completo: **LUCAS HENRIQUE TASCA DE ARAUJO** 
-E-mail: **tascalucas6@gmail.com** 
-Inscrição: **16425** 
-Vaga: **Full Stack** 
+- Nome completo: **LUCAS HENRIQUE TASCA DE ARAUJO** 
+- E-mail: **tascalucas6@gmail.com** 
+- Inscrição: **16425** 
+- Vaga: **Full Stack** 
 
 ## Commits gerados por Lucas Henrique Tasca de Araujo - Taskera123 
+
+## Comentarios pessoais sobre a avaliação
+
+O projeto aparentemente simples, ficou trabalhoso, justamente no quesito de implementação de testes e no ratelimit de 10 requisições por minuto, onde tive que usar bastante o facade para armazenar informações momentâneas
 
 ## Visão geral
 
@@ -271,10 +275,10 @@ flowchart TD
     C --> D[docker compose up --build]
 
     D --> E[Serviços ativos]
-    E --> F[Frontend (React) :8081]
-    E --> G[Backend (Spring Boot) :8080/albumartistaapi]
-    E --> H[PostgreSQL :5432]
-    E --> I[MinIO :9000 / Console :9001]
+    E --> F[Frontend (React) porta 8081]
+    E --> G[Backend (Spring Boot) porta 8080/albumartistaapi]
+    E --> H[PostgreSQL porta 5432]
+    E --> I[MinIO porta 9000 / Console porta 9001]
 
     F --> J[Login administrativo]
     J --> K[Autenticação JWT]
