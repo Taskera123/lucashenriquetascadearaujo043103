@@ -1,11 +1,13 @@
 package artistalbum.domain.auth.controller;
 
+import artistalbum.TestApplication;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.seplag.artistalbum.domain.auth.controller.AuthResource;
 import com.seplag.artistalbum.domain.auth.dto.LoginRequest;
 import com.seplag.artistalbum.domain.auth.service.JwtService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
@@ -14,6 +16,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Date;
@@ -25,6 +28,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(AuthResource.class)
+@ContextConfiguration(classes = TestApplication.class)
 class AuthResourceTest {
 
     @Autowired
@@ -38,6 +42,10 @@ class AuthResourceTest {
 
     @MockBean
     private JwtService jwtService;
+
+    @SpringBootConfiguration
+    static class TestConfig {
+    }
 
     @Test
     void loginRetornaToken() throws Exception {
