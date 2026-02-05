@@ -184,7 +184,7 @@ export default function AlbumDetailDialog({ visible, albumId, onHide }: Props) {
 
       <Card title={album?.tituloAlbum ?? '...'} subTitle={album?.nomeArtista ?? ''}>
         <div style={{ display: 'grid', gap: 12 }}>
-          <div style={{ width: '100%', maxWidth: 520 }}>
+          <div style={{ width: '100%', maxWidth: 520, margin: '0 auto', minWidth: 0 }}>
             {carouselItems.length ? (
               <Carousel
                 value={carouselItems}

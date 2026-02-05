@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
@@ -18,6 +18,8 @@ export default function BandsPage() {
   const [selectedBandId, setSelectedBandId] = useState<number | null>(null);
   const [detailVisible, setDetailVisible] = useState(false);
   const [detailBandId, setDetailBandId] = useState<number | null>(null);
+  const lastLoadKey = useRef<string | null>(null);
+
 
   useEffect(() => {
     const sub = bandList$.subscribe(setS);
@@ -25,6 +27,9 @@ export default function BandsPage() {
   }, []);
 
   useEffect(() => {
+    const key = `${s.page}-${s.size}-${s.sortDir}`;
+    if (lastLoadKey.current === key) return;
+    lastLoadKey.current = key;
     BandFacade.load();
   }, [s.page, s.size, s.sortDir]);
 
@@ -41,6 +46,11 @@ export default function BandsPage() {
     { label: 'A → Z', value: 'asc' },
     { label: 'Z → A', value: 'desc' }
   ];
+
+  const resolveBandId = (row: any) => {
+    const id = row?.idBanda ?? row?.id;
+    return typeof id === 'number' ? id : null;
+  };
   
   function openCreate() {
     setDialogMode('create');
@@ -120,7 +130,7 @@ export default function BandsPage() {
         responsiveLayout="scroll"
         emptyMessage="Nenhuma banda encontrada."
         onRowClick={(e) => {
-          const id = (e.data as any).idBanda as number | undefined;
+          const id = resolveBandId(e.data);
           if (id != null) openDetail(id);
         }}
       >
@@ -134,8 +144,26 @@ export default function BandsPage() {
           header="Ações"
           body={(row: any) => (
             <div className="flex gap-2">
-              <Button icon="pi pi-eye" rounded text className="app-button-primary" onClick={() => openDetail(row.idBanda)} />
-              <Button icon="pi pi-pencil" rounded text className="app-button-secondary" onClick={() => openEdit(row.idBanda)} />
+               {/* <Button
+                icon="pi pi-eye"
+                rounded
+                text
+                className="app-button-primary"
+                onClick={() => {
+                  const id = resolveBandId(row);
+                  if (id != null) openDetail(id);
+                }}
+              /> */}
+              <Button
+                icon="pi pi-pencil"
+                rounded
+                text
+                className="app-button-secondary"
+                onClick={() => {
+                  const id = resolveBandId(row);
+                  if (id != null) openEdit(id);
+                }}
+              />
             </div>
           )}
           style={{ width: 140, textAlign: 'center' }}

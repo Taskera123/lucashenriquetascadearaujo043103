@@ -8,10 +8,10 @@ import { Message } from 'primereact/message';
 import { Dropdown } from 'primereact/dropdown';
 import { Tag } from 'primereact/tag';
 import { AlbumService } from '../../services/AlbumService';
-import { ArtistService } from '../../services/ArtistaService';
 import { BandaService } from '../../services/BandaService';
-import type { AlbumCapaDTO, ArtistaDTO, BandaResponseDTO } from '../../types/api';
 import AlbumCoverUploader from './AlbumCoverUploader';
+import { AlbumFacade } from '../../facades/AlbumFacade';
+import type { AlbumCapaDTO, ArtistaDTO, BandaResponseDTO, ArtistaResponseDTO } from '../../types/api';
 
 type Props = {
   visible: boolean;
@@ -40,6 +40,14 @@ export default function AlbumFormDialog({ visible, mode, artistId, albumId, onHi
   const [extraError, setExtraError] = useState<string | null>(null);
   const extraInputRef = useRef<HTMLInputElement | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+
+  const normalizeArtists = (list: ArtistaResponseDTO[] | ArtistaDTO[]) => {
+    return (list ?? []).map((artist) => ({
+      ...artist,
+      id: (artist as ArtistaDTO).id ?? (artist as ArtistaResponseDTO).idArtista ?? null,
+      nome: (artist as ArtistaDTO).nome ?? (artist as ArtistaResponseDTO).nomeArtista ?? ''
+    })) as ArtistaDTO[];
+  };
 
 
   const [loading, setLoading] = useState(mode === 'edit');
@@ -99,18 +107,9 @@ export default function AlbumFormDialog({ visible, mode, artistId, albumId, onHi
   useEffect(() => {
     if (!visible) return;
     (async () => {
-      try {
-        const { data } = await ArtistService.listarTodos({ pagina: 0, tamanho: 500, ordenacao: 'asc' });
-        setArtists(data.content ?? []);
-      } catch {
-        setArtists([]);
-      }
-      try {
-        const { data: bandList } = await BandaService.listarTodos();
-        setBands(bandList ?? []);
-      } catch {
-        setBands([]);
-      }
+       const catalog = await AlbumFacade.loadCatalog();
+       setArtists(normalizeArtists(catalog.artists ?? []));
+       setBands(catalog.bands ?? []);
     })();
   }, [visible]);
 
@@ -222,6 +221,10 @@ export default function AlbumFormDialog({ visible, mode, artistId, albumId, onHi
         if (pickedFile) {
           await AlbumService.atualizarCapa(albumId, pickedFile);
         }
+      }
+
+      if (mode === 'edit' && extraFiles.length) {
+        await handleExtraUpload();
       }
 
       await onSaved?.(savedId);

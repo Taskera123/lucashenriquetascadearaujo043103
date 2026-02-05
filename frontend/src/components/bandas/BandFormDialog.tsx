@@ -4,9 +4,10 @@ import { InputText } from 'primereact/inputtext';
 import { Button } from 'primereact/button';
 import { Message } from 'primereact/message';
 import { MultiSelect } from 'primereact/multiselect';
-import type { ArtistaDTO, BandaResponseDTO } from '../../types/api';
 import { BandaService } from '../../services/BandaService';
-import { ArtistService } from '../../services/ArtistaService';
+import { AlbumFacade } from '../../facades/AlbumFacade';
+import type { ArtistaDTO, ArtistaResponseDTO, BandaResponseDTO } from '../../types/api';
+
 
 type Props = {
   visible: boolean;
@@ -24,6 +25,14 @@ export default function BandFormDialog({ visible, mode, bandId, onHide, onSaved 
   const [loading, setLoading] = useState(mode === 'edit');
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const normalizeArtists = (list: ArtistaResponseDTO[] | ArtistaDTO[]) => {
+    return (list ?? []).map((artist) => ({
+      ...artist,
+      id: (artist as ArtistaDTO).id ?? (artist as ArtistaResponseDTO).idArtista ?? null,
+      nome: (artist as ArtistaDTO).nome ?? (artist as ArtistaResponseDTO).nomeArtista ?? ''
+    })) as ArtistaDTO[];
+  };
 
   const title = useMemo(() => (mode === 'create' ? 'Nova banda' : 'Editar banda'), [mode]);
 
@@ -60,12 +69,8 @@ export default function BandFormDialog({ visible, mode, bandId, onHide, onSaved 
   useEffect(() => {
     if (!visible) return;
     (async () => {
-      try {
-        const { data } = await ArtistService.listarTodos({ pagina: 0, tamanho: 500, ordenacao: 'asc' });
-        setArtists(data.content ?? []);
-      } catch {
-        setArtists([]);
-      }
+      const catalog = await AlbumFacade.loadCatalog();
+      setArtists(normalizeArtists(catalog.artists ?? []));
     })();
   }, [visible]);
 
