@@ -1,6 +1,5 @@
 package artistalbum.domain.artista.controller;
 
-import artistalbum.TestApplication;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.seplag.artistalbum.domain.artista.controller.ArtistaResource;
 import com.seplag.artistalbum.domain.artista.dto.ArtistaRequestDTO;
@@ -13,7 +12,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.boot.SpringBootConfiguration;
-import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
@@ -26,8 +25,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(ArtistaResource.class)
-@ContextConfiguration(classes = TestApplication.class)
 @AutoConfigureMockMvc(addFilters = false)
+@TestPropertySource(properties = "server.servlet.context-path=")
 class ArtistaResourceTest {
 
     @Autowired
