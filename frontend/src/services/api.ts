@@ -1,5 +1,6 @@
 import axios, { AxiosError } from 'axios';
 import { auth$, clearAuth, setAuth } from '../state/auth.store';
+import { setRateLimit } from '../state/rateLimit.store';
 import type { LoginResponse } from '../types/api';
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8080/albumartistaapi';
@@ -51,7 +52,21 @@ api.interceptors.response.use(
       }
     }
     if (error.response?.status === 429) {
-      const message = 'Muitas requisições ao mesmo tempo. Aguarde alguns instantes e tente novamente.';
+      const message = 'Muitas requisições ao mesmo tempo. Apenas 10 por minuto. Aguarde 1min e tente novamente.';
+      const retryAfter = error.response?.headers?.['retry-after'];
+      let resetAt: number | null = null;
+      if (retryAfter) {
+        const retryAsNumber = Number(retryAfter);
+        if (!Number.isNaN(retryAsNumber)) {
+          resetAt = Date.now() + retryAsNumber * 1000;
+        } else {
+          const retryAsDate = new Date(retryAfter);
+          if (!Number.isNaN(retryAsDate.getTime())) {
+            resetAt = retryAsDate.getTime();
+          }
+        }
+      }
+      setRateLimit({ message, resetAt });
       return Promise.reject(new Error(message));
     }
     return Promise.reject(error);
