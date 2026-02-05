@@ -65,7 +65,7 @@ export default function SideNav({ collapsed, onToggle }: Props) {
           label={collapsed ? '' : 'Sair'}
           severity="danger"
           text
-          onClick={() => { AuthFacade.logout(); nav('/home'); }}
+          onClick={() => { AuthFacade.logout(); nav('/login'); }}
           style={{ justifyContent: collapsed ? 'center' : 'flex-start' }}
         />
       </div>

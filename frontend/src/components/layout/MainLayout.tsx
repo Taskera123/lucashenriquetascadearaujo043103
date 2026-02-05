@@ -68,13 +68,13 @@ export default function MainLayout() {
       setShowRenew(false);
     } catch {
       AuthFacade.logout();
-      nav('/home');
+      nav('/login');
     }
   }
 
   function handleLogout() {
     AuthFacade.logout();
-    nav('/home');
+    nav('/login');
   }
 
   return (
