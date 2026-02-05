@@ -275,10 +275,10 @@ flowchart TD
     C --> D[docker compose up --build]
 
     D --> E[Serviços ativos]
-    E --> F[Frontend (React) porta 8081]
-    E --> G[Backend (Spring Boot) porta 8080/albumartistaapi]
-    E --> H[PostgreSQL porta 5432]
-    E --> I[MinIO porta 9000 / Console porta 9001]
+    E --> F["Frontend (React) porta 8081"]
+    E --> G["Backend (Spring Boot) porta 8080/albumartistaapi"]
+    E --> H["PostgreSQL porta 5432"]
+    E --> I["MinIO porta 9000 / Console porta 9001"]
 
     F --> J[Login administrativo]
     J --> K[Autenticação JWT]
