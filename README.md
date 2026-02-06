@@ -141,16 +141,11 @@ backend/
 │   └── test/
 │       └── java
 │         └── artistalbum
-|                ├── config
-|                │   └── ratelimit
 │                └── domain
 │                    ├── album
 │                    │   └── service
 │                    ├── artista
-│                    │   ├── controller
 │                    │   └── service
-│                    ├── auth
-│                    │   └── controller  
 │                    └── banda
 │                        └── service
 └── pom.xml
