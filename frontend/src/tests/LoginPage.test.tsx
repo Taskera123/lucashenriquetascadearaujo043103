@@ -1,5 +1,5 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { expect, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import '@testing-library/jest-dom';
 import { MemoryRouter } from 'react-router-dom';
 import LoginPage from '../pages/auth/LoginPage';
@@ -49,8 +49,8 @@ describe('LoginPage', () => {
     );
 
     const inputs = screen.getAllByRole('textbox');
-    fireEvent.change(inputs[0], { target: { value: 'usuario' } });
-    fireEvent.change(inputs[1], { target: { value: 'senha' } });
+    fireEvent.change(screen.getByLabelText('Usuário'), { target: { value: 'usuario' } });
+    fireEvent.change(screen.getByLabelText('Senha'), { target: { value: 'senha' } });
 
     fireEvent.click(screen.getByRole('button', { name: /entrar/i }));
 
